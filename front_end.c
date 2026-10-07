@@ -1,0 +1,116 @@
+#include"front_end.h"
+#include <stdio.h>
+
+
+
+void print_menu(){
+    char *A = "[A]dd merchandise";
+    char *L = "[L]ist merchandise";
+    char *D = "[D]elete merchandise";
+    char *E = "[E]dit merchandise";
+    char *S = "[S]how merchandise";
+    char *P = "Re[p]lenish"; 
+    char *C = "[C]reate Cart";
+    char *R = "[R]emove Cart";
+    char *add_cart = "[+]Add to Cart";
+    char *remove_cart = "[-]Remove from Cart";
+    char *calculate = "[=]Calculate cost";
+    char *O = "Check[O]ut"; 
+    char *Q = "[Q]uit";
+
+    printf("%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%\n", 
+        A, L, D, E, S, P, C, R, add_cart, remove_cart, calculate, O, Q);
+}
+
+
+void add_merchandise_ui(hash_table_t *ht){
+    //TODO:stub
+}
+
+void remove_merchandise_ui(hash_table_t *ht){
+    //TODO:stub
+}
+void edit_merchandise_ui(hash_table_t *ht){
+    //TODO:stub
+}
+void show_stock_ui(hash_table_t *ht){
+    //TODO:stub
+}
+void replenish_ui(hash_table_t *ht){
+    //TODO:stub
+}
+void create_cart_ui(){
+    //TODO:stub
+}
+void remove_cart_ui(){
+    //TODO:stub
+}
+void add_to_cart_ui(){
+    //TODO:stub
+}
+void remove_from_cart_ui(){
+    //TODO:stub
+}
+void calculate_cost_ui(){
+    //TODO:stub
+}
+void checkout_ui(){
+    //TODO:stub
+}
+
+
+
+int event_loop(hash_table_t *ht, merch_t merch, shopping_cart_t shopping_cart, size_t amount) {
+    while(true){
+        char choice = ask_question_menu("Pick your choice: ");
+        if (choice == 'A'){
+            add_merchandise_ui(ht);
+        }
+        else if (choice == 'L'){
+            list_merchandise(ht); //LÖS
+        }
+        else if (choice == 'D'){
+            remove_merchandise_ui(ht);
+        }
+        else if (choice == 'E'){
+            edit_merchandise_ui(ht);
+        }
+        else if (choice == 'S') {
+            show_stock_ui(ht);
+        }
+        else if (choice == 'P') {
+            replenish_ui(ht);
+            return 0;
+        }
+        else if (choice == 'C') {
+            create_cart_ui();
+            return 0;
+        }
+        else if (choice == 'R') {
+            remove_cart_ui();
+            return 0;
+        }
+        else if (choice == '+') {
+            add_to_cart_ui();
+            return 0;
+        }
+        else if (choice == '-') {
+            remove_from_cart_ui();
+            return 0;
+        }
+        else if (choice == '=') {
+            calculate_cost_ui();
+            return 0;
+        }
+        else if (choice == 'O') {
+            checkout_ui();
+            return 0;
+        }
+        else if (choice == 'Q') {
+            quit();
+            return 0;
+        }
+    }
+    return 0;
+    
+}
