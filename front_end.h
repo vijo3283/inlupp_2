@@ -1,3 +1,4 @@
+#pragma once
 #include"back_end.h"
 #include"../inlupp1/hash_table.h"
 #include"../inlupp1/hash_table_iterator.h"

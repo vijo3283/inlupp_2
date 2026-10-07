@@ -1,12 +1,18 @@
 #include"back_end.h"
 
 
-merch_t ioopm_create_merchandise(char *name, char *description, int price){
-    //TODO: Stub
+merch_t *ioopm_create_merchandise(char *name, char *description, int price){
+    merch_t *merch = malloc(sizeof(merch_t));
+    merch->name = name;
+    merch->description = description;
+    merch->price = price;
+    merch->stock = 0;
+    merch->location = ioopm_list_create();
+    return merch;
 }
 
 
-void ioopm_add_merchandise(hash_table_t *ht, merch_t merch){
+void ioopm_add_merchandise(hash_table_t *ht, merch_t *merch){
     //TODO: Stub
 }
 
@@ -22,7 +28,7 @@ void edit_merchandise(hash_table_t *ht, merch_t merch){
     //TODO; stub
 }
 
-void show_stock(hash_table_t *ht, merch_t merch){
+size_t show_stock(hash_table_t *ht, merch_t merch){
     //TODO; stub
 }
 

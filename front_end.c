@@ -24,7 +24,11 @@ void print_menu(){
 
 
 void add_merchandise_ui(hash_table_t *ht){
-    //TODO:stub
+    char *name = ask_question_string("What is the name of the merch");
+    char *description = ask_question_string("What is the description");
+    int price = ask_question_int("What is the description");
+    merch_t *merch = ioopm_create_merchandise(name, description, price);
+    ioopm_add_merchandise(ht, merch);
 }
 
 void remove_merchandise_ui(hash_table_t *ht){
