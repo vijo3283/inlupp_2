@@ -6,6 +6,8 @@ typedef struct entry entry_t;
 typedef struct hash_table hash_table_t;
 typedef struct hash_table_iterator hash_table_iterator_t;
 
+//redigera? så att key är själva namnet på merch
+//sedan att value är pekare till en länkad lista där stock visas.
 struct entry
 {
   elem_t key;

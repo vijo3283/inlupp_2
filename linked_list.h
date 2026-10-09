@@ -1,22 +1,9 @@
 #pragma once
 #include <stdbool.h>
-#include <stdlib.h>
 #include "common.h"
 
-/**
-* @file linked_list.h
-* @author Lina Holsti, Elis Lemon
-* @date 22 Sep 2026
-* @brief Simple linked list implementation
-*
-* A linked list is a linked structure where every node is a link_t, containing an element and a poniter to the next link_t. 
-* The elements are of type elem_t, meaning they can store integers, strings, booleans or pointers. 
-* The implementation provides operations for inserting, deleting, prepending, get and appending elements.
-* A linked list can be empty
-*
-*/
+typedef struct list ioopm_list_t;
 
-typedef struct list ioopm_list_t; /// Meta: struct definition goes in C file
 typedef struct link link_t;
 
 /// @brief Creates a new empty list
@@ -40,11 +27,13 @@ void ioopm_list_prepend(ioopm_list_t *list, elem_t value);
 /// @brief Return the first element of a linked list in O(1) time
 /// @pre the list is non-empty
 /// @param list the linked list to take the head of
+/// @return the value of the first link in the list
 elem_t ioopm_list_head(ioopm_list_t *list);
 
 /// @brief Return the last element of a linked list in O(1) time
 /// @pre the list is non-empty
 /// @param list the linked list to take the last element of
+/// @return the value of the last link in the list
 elem_t ioopm_list_last(ioopm_list_t *list);
 
 /// @brief Insert an element into a linked list in O(n) time.

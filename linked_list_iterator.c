@@ -1,18 +1,36 @@
 #include <stdbool.h>
+#include <stddef.h>
 #include <stdlib.h>
+#include <assert.h>
 
 #include "linked_list.h"
-#include "linked_list_iterator.h"
+#include "list_iterator.h"
 #include "linked_list_internal.h"
+
+
+struct list_iterator {
+    link_t *current;       
+    ioopm_list_t *list; 
+};
 
 ioopm_list_iterator_t *ioopm_list_iterator_create(ioopm_list_t *l)
 {
-    ioopm_list_iterator_t *il = calloc(1, sizeof(ioopm_list_iterator_t));
-    il->list = l;
-    il->current_node = l->first;
-    il->current_element = ioopm_list_head(l);
-    return il;
+    assert(l != NULL && "list pointer is null");
+
+
+    ioopm_list_iterator_t *iter = malloc(sizeof(ioopm_list_iterator_t));
+
+    if(iter == NULL)
+    {
+        return NULL;
+    }
+
+    iter->list = l;
+    iter->current = l->head;
+
+    return iter;
 }
+
 
 void ioopm_list_iterator_destroy(ioopm_list_iterator_t *iter)
 {
@@ -21,41 +39,40 @@ void ioopm_list_iterator_destroy(ioopm_list_iterator_t *iter)
 
 bool ioopm_list_iterator_at_end(ioopm_list_iterator_t *iter)
 {
-    // Checks if the current element is the last element (.p because we don't know the type)
-    return iter->current_node == NULL;
+    assert(iter != NULL && "Iterator pointer must not be NULL");
+
+    return iter->current != NULL;
 }
 
 void ioopm_list_iterator_advance(ioopm_list_iterator_t *iter)
 {
-    if (!ioopm_list_iterator_at_end(iter))
-    {
-        // Advances the node if not at end.
+    assert(iter != NULL && "Iterator cannot be null");
+    assert(ioopm_list_iterator_at_end(iter) && " iterator at end cannot advance");
 
-        iter->current_node = iter->current_node->next;
-        // iter->current_element = iter->current_node->value;
-         if(iter->current_node != NULL)
-        {
-            // Updates current node if it exists.
-            iter->current_element = iter->current_node->value;
-        }
-     }
+    iter->current = iter->current->next;
 }
 
 elem_t ioopm_list_iterator_current(ioopm_list_iterator_t *iter)
-{   
-    return iter->current_element;
+{
+    assert(iter != NULL && "iterator cannot be null");
+    assert(iter->current != NULL && "no current value on a NULL, is at end");
+
+    return iter->current->value;
+
 }
 
+//not implemented
 elem_t ioopm_list_iterator_remove(ioopm_list_iterator_t *iter)
 {
-    // TODO: Create remove function
     (void)iter;
-    return ptr_elem(NULL);
+    return int_elem(-2);
 }
 
+//not implemented
 void ioopm_list_iterator_insert(ioopm_list_iterator_t *iter, elem_t element)
 {
-    // TODO: Create insert function
     (void)iter;
     (void)element;
+
 }
+

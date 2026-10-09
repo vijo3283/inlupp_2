@@ -1,5 +1,6 @@
 #include"front_end.h"
 #include <stdio.h>
+#include "utils.h"
 
 
 
@@ -18,7 +19,7 @@ void print_menu(){
     char *O = "Check[O]ut"; 
     char *Q = "[Q]uit";
 
-    printf("%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%\n", 
+    printf("%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n", 
         A, L, D, E, S, P, C, R, add_cart, remove_cart, calculate, O, Q);
 }
 
@@ -65,7 +66,11 @@ void checkout_ui(){
 
 
 int event_loop(hash_table_t *ht, merch_t merch, shopping_cart_t shopping_cart, size_t amount) {
+    //skapa en hash table innan loopen för att kunna köra i terminalen.
     while(true){
+        
+        print_menu();
+
         char choice = ask_question_menu("Pick your choice: ");
         if (choice == 'A'){
             add_merchandise_ui(ht);

@@ -1,23 +1,10 @@
 #pragma once
 #include <stdbool.h>
-
 #include "linked_list.h"
-
-/**
-* @file list_iterator.h
-* @author Lina Holsti, Elis Lemon
-* @date 22 Sep 2026
-* @brief Simple linked list iterator
-*
-* Linked list iterators provide an interface to iterate through all the elements in a linked list.
-* An iterator is either positioned at an element, called the current element, or it is positioned at-the-end, if it has already iterated through all elements.
-* If the underlying linked list of an iterator is modified using any non-iterator function, the iterator is invalidated and should not be used anymore.
-*
-*/
 
 typedef struct list_iterator ioopm_list_iterator_t;
 
-/// @brief Create a new iterator
+/// @brief Create a new iterator. Starts at the first element
 /// @param l the list to iterate over
 ioopm_list_iterator_t *ioopm_list_iterator_create(ioopm_list_t *l);
 
@@ -39,13 +26,13 @@ void ioopm_list_iterator_advance(ioopm_list_iterator_t *iter);
 /// @return the current element
 elem_t ioopm_list_iterator_current(ioopm_list_iterator_t *iter);
 
-/// NOTE: REMOVE IS OPTIONAL TO IMPLEMENT
+/// NOTE: not implemented
 /// @brief Remove the current element from the underlying list
 /// @param iter the iterator
 /// @return the removed element
 elem_t ioopm_list_iterator_remove(ioopm_list_iterator_t *iter);
 
-/// NOTE: INSERT IS OPTIONAL TO IMPLEMENT
+/// NOTE: not implemented
 /// @brief Insert a new element into the underlying list making the current element it's next
 /// @param iter the iterator
 /// @param element the element to be inserted
