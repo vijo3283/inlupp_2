@@ -283,17 +283,12 @@ char *ask_question_shelf(char *question)
 
 
 
-char ask_question_menu(void)
+char ask_question_menu(char *question)
 {
-   
-    //användaren skrickar in ett svar.
-    char *question = "Ditt val: ";
-    
     //tar hjälp av ask_question
     answer_t answer = ask_question(question, (check_func *) right_letter, (convert_func *) char_to_answer);
 
     //gör den till char eftersom den är skriven som ascii
     return (char)answer.int_value;
 }
-
 

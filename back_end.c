@@ -13,7 +13,7 @@ merch_t *ioopm_create_merchandise(char *name, char *description, int price){
 
 
 void ioopm_add_merchandise(hash_table_t *ht, merch_t *merch){
-    //TODO: Stub
+    ioopm_hash_table_insert(ht, string_elem(merch->name), ptr_elem(merch));
 }
 
 void list_merchandise(hash_table_t *ht){
@@ -32,8 +32,8 @@ size_t show_stock(hash_table_t *ht, merch_t merch){
     //TODO; stub
 }
 
-void replenish(hash_table_t *ht, merch_t merch, size_t amount){
-    //TODO; stub
+void replenish(hash_table_t *ht, char *merch, size_t amount, char *shelf){
+    //TODO: stub
 }
 
 shopping_cart_t create_cart(){
