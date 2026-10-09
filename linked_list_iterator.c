@@ -4,7 +4,7 @@
 #include <assert.h>
 
 #include "linked_list.h"
-#include "list_iterator.h"
+#include "linked_list_iterator.h"
 #include "linked_list_internal.h"
 
 

@@ -244,7 +244,7 @@ bool is_shelf(char *shelf)
 {
   int len = strlen(shelf);
 
-  if(len < 2)
+  if(len != 3)
   {
     return false;
 

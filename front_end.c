@@ -24,12 +24,13 @@ void print_menu(){
 }
 
 
-void add_merchandise_ui(hash_table_t *ht){
+void add_merchandise_ui(data_base_t *db){
+
     char *name = ask_question_string("What is the name of the merch");
     char *description = ask_question_string("What is the description");
     int price = ask_question_int("What is the description");
     merch_t *merch = ioopm_create_merchandise(name, description, price);
-    ioopm_add_merchandise(ht, merch);
+    ioopm_add_merchandise(db->merch_ht, merch);
 }
 
 void remove_merchandise_ui(hash_table_t *ht){
@@ -41,12 +42,12 @@ void edit_merchandise_ui(hash_table_t *ht){
 void show_stock_ui(hash_table_t *ht){
     //TODO:stub
 }
-void replenish_ui(hash_table_t *ht){
+void replenish_ui(data_base_t *db){
     char *name = ask_question_string("Name of merch:");
     size_t amount = ask_question_int("How many?");
-    char *shelf = ask_question_string("Which shelf?");
-    //kolla så shelf är is_shelf
-    replenish(ht, name, amount, shelf);
+    char *shelf = ask_question_shelf("Which shelf?");
+   
+    replenish(db->merch_ht, name, amount, shelf);
 }
 void create_cart_ui(){
     //TODO:stub
@@ -70,17 +71,20 @@ void checkout_ui(){
 
 
 int event_loop(hash_table_t *ht) {
+    
+    data_base_t db = ioopm_create_data_base();
+    
     while(true){
         print_menu();
         char choice = ask_question_menu("Pick your choice: ");
         if (choice == 'A'){
-            add_merchandise_ui(ht);
+            add_merchandise_ui(&db);
         }
         else if (choice == 'L'){
-            list_merchandise(ht); //LÖS
+            list_merchandise(&db); //LÖS
         }
         else if (choice == 'D'){
-            remove_merchandise_ui(ht);
+            remove_merchandise_ui(&db);
         }
         else if (choice == 'E'){
             edit_merchandise_ui(ht);

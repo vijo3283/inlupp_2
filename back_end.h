@@ -10,6 +10,7 @@
 typedef struct merch merch_t;
 typedef struct shopping_cart shopping_cart_t;
 typedef struct shelf shelf_t;
+typedef struct data_base data_base_t;
 
 
 struct merch 
@@ -33,8 +34,18 @@ struct shelf
 {
     char *shelf;
     size_t quantity;
+    elem_t *merch_name;
 };
 
+
+struct data_base
+{
+    hash_table_t *merch_ht;
+    hash_table_t *shelf_ht;
+    ioopm_list_t *carts;
+};
+
+data_base_t ioopm_create_data_base(void);
 
 merch_t *ioopm_create_merchandise(char *name, char *description, int price);
 
