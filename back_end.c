@@ -13,7 +13,7 @@ merch_t *ioopm_create_merchandise(char *name, char *description, int price){
 
 
 void ioopm_add_merchandise(hash_table_t *ht, merch_t *merch){
-    //TODO: Stub
+    ioopm_hash_table_insert(ht, string_elem(merch->name), ptr_elem(merch));
 }
 
 void list_merchandise(hash_table_t *ht){
@@ -32,8 +32,23 @@ size_t show_stock(hash_table_t *ht, merch_t merch){
     //TODO; stub
 }
 
-void replenish(hash_table_t *ht, merch_t merch, size_t amount){
-    //TODO; stub
+void replenish(hash_table_t *ht, merch_t *merch, size_t amount, char *shelf){
+   if(ioopm_hash_table_has_key(ht, ptr_elem(merch->name))){
+    hash_table_iterator_t *it = ioopm_hash_table_iterator_create(ht);
+    while (!ioopm_hash_table_iterator_current_key == merch->name){
+        ioopm_hash_table_iterator_advance(it);
+    }
+    list_t *shelf_list = merch->location;
+    list_iterator_t *list_iter = ioopm_list_iterator_create(shelf_list);
+    while (!ioopm_list_iterator_current == shelf){
+        ioopm_list_iterator_advance(it);
+    }
+    
+
+   }
+
+    
+    }
 }
 
 shopping_cart_t create_cart(){

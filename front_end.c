@@ -41,7 +41,11 @@ void show_stock_ui(hash_table_t *ht){
     //TODO:stub
 }
 void replenish_ui(hash_table_t *ht){
-    //TODO:stub
+    char *name = ask_question_string("Name of merch:");
+    size_t amount = ask_question_int("How many?");
+    char *shelf = ask_question_string("Which shelf?");
+    //kolla så shelf är is_shelf
+    replenish(ht, name, amount, shelf);
 }
 void create_cart_ui(){
     //TODO:stub
@@ -64,8 +68,9 @@ void checkout_ui(){
 
 
 
-int event_loop(hash_table_t *ht, merch_t merch, shopping_cart_t shopping_cart, size_t amount) {
+int event_loop(hash_table_t *ht) {
     while(true){
+        print_menu();
         char choice = ask_question_menu("Pick your choice: ");
         if (choice == 'A'){
             add_merchandise_ui(ht);
