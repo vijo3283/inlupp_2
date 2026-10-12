@@ -2,9 +2,10 @@
 #include <stddef.h>
 #include <stdlib.h>
 #include <assert.h>
+#include <string.h>
 
 #include "linked_list.h"
-#include "list_iterator.h"
+#include "linked_list_iterator.h"
 #include "linked_list_internal.h"
 #include "common.h"
 

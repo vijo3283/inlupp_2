@@ -45,6 +45,9 @@ struct data_base
     ioopm_list_t *carts;
 };
 
+void ioopm_list_sort(ioopm_list_t *list, char *value);
+
+
 data_base_t *ioopm_create_data_base(void);
 
 merch_t *ioopm_create_merchandise(char *name, char *description, int price);
@@ -67,16 +70,16 @@ size_t show_stock(data_base_t *db, char *merch);
 
 bool replenish(data_base_t *db, char *merch, size_t amount, char *shelf);
 
-shopping_cart_t create_cart();
+void create_cart();
 
 
 void remove_cart(shopping_cart_t shopping_cart);
  
 
-shopping_cart_t add_to_cart(shopping_cart_t shopping_cart, merch_t merch, size_t amount);
+void add_to_cart(shopping_cart_t shopping_cart, merch_t merch, size_t amount);
 
 
-shopping_cart_t remove_from_cart(shopping_cart_t shopping_cart, merch_t merch, size_t amount);
+void remove_from_cart(shopping_cart_t shopping_cart, merch_t merch, size_t amount);
 
 
 int calculate_cost(shopping_cart_t shopping_cart);
@@ -85,4 +88,3 @@ int calculate_cost(shopping_cart_t shopping_cart);
 void checkout(shopping_cart_t shopping_cart);
 
 
-void quit();

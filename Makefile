@@ -1,7 +1,5 @@
-CC = gcc
-CFLAGS = -Wall -Wextra -g
-LDFLAGS = -lcunit
+program: front_end.c back_end.c hash_table.c hash_table_iterator.c linked_list.c linked_list_iterator.c utils.c
+	gcc -Wall -Wextra -g front_end.c back_end.c hash_table.c hash_table_iterator.c linked_list.c linked_list_iterator.c utils.c -o program
 
-back_end.o: back_end.c back_end.h
-
-
+clean:
+	rm -f program
