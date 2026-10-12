@@ -2,7 +2,7 @@
 
 data_base_t *ioopm_create_data_base(void){
 
-    data_base_t *new_db;
+    data_base_t *new_db = malloc(sizeof(data_base_t));
 
     new_db->merch_ht = ioopm_hash_table_create(string_hash, comp_str);
     new_db->shelf_ht = ioopm_hash_table_create(string_hash, comp_str);
@@ -41,86 +41,117 @@ void list_merchandise(hash_table_t *ht){
     //TODO; stub
 }
 
-void remove_merchandise(hash_table_t *ht, merch_t merch){
-    //TODO; stub
+bool remove_merchandise(data_base_t *db, char *merch){
+    merch_t *merch_to_remove;
+    bool merch_lookup = ioopm_hash_table_lookup(db->merch_ht, string_elem(merch), &merch_to_remove);
+
+    if(!merch_lookup)
+    {
+        return false;
+    }
+    else 
+    {   
+
+        ioopm_list_destroy(merch_to_remove->location);
+        ioopm_hash_table_remove(db->merch_ht, string_elem(merch_to_remove));
+    }
 }
 
-void edit_merchandise(hash_table_t *ht, merch_t merch){
-    //TODO; stub
+bool edit_merchandise(data_base_t *db, char *old_name, char *new_name, char *description, size_t price){
+    merch_t *old_merch;
+    bool merch_lookup = ioopm_hash_table_lookup(db->merch_ht, string_elem(old_name), &old_merch);
+
+    if(!merch_lookup)
+    {
+        return false;
+    }
+
+    if (strcmp(old_merch->name, new_name) == 0)
+    {
+        old_merch->description = description;
+        old_merch->price = price;
+        return true;
+    }
+    else
+    {
+        merch_t *result;
+        if(ioopm_hash_table_lookup(db->merch_ht, string_elem(new_name), &result))
+        {
+            return false;
+        }
+        ioopm_hash_table_remove(db->merch_ht, string_elem(old_name));
+        old_merch->name = new_name;
+        old_merch->description = description;
+        old_merch->price = price;
+        ioopm_list_t *old_list = old_merch->location;
+
+        ioopm_list_iterator_t *it = ioopm_list_iterator_create(old_list);
+
+        while(!ioopm_list_iterator_at_end(it)){
+            shelf_t *current_shelf = ioopm_list_iterator_current(it).p;
+            current_shelf->merch_name = new_name;
+            ioopm_list_iterator_advance(it);
+        }
+        ioopm_list_iterator_destroy(it);
+        ioopm_hash_table_insert(db->merch_ht, string_elem(new_name), ptr_elem(old_merch));
+        return true;
+        
+    }
 }
 
-size_t show_stock(hash_table_t *ht, merch_t merch){
-    //TODO; stub
+size_t show_stock(data_base_t *db, char *merch){
+     merch_t *current_merch;
+     bool merch_lookup = ioopm_hash_table_lookup(db->merch_ht, string_elem(merch), &current_merch);
+
+     if (merch_lookup) {
+        return current_merch->stock;
+     }
+     else 
+     {
+        return 0;
+     }
 }
 
 bool replenish(data_base_t *db, char *merch, size_t amount, char *shelf){
     //TODO: stub
-
     //vi måste fixa eftersom de pekar på samma struct och kanske lägga till hylla redan i början.
     shelf_t *shelf_occupied;
+    bool shelf_exist = ioopm_hash_table_lookup(db->shelf_ht, string_elem(shelf), &shelf_occupied);
+
+     merch_t *current_merch;
+     bool merch_lookup = ioopm_hash_table_lookup(db->merch_ht,string_elem(merch), &current_merch);
+
+     ioopm_list_t *shelf_list = current_merch->location;
     //kolla igenom shelf ht för att kolla så varan inte finns redan på en hylla upptagen av en annan vara
-    if(ioopm_hash_table_lookup(db->shelf_ht, string_elem(shelf), &shelf_occupied))
+
+    if (!merch_lookup){
+        return false;
+    }
+
+    if(shelf_exist)
     {
         //redan upptagen av en annan merch
-        if(!(strcmp(shelf_occupied->merch_name->s, merch) == 0))
+        if(!(strcmp(shelf_occupied->merch_name, merch) == 0))
         {
             return false;
 
         }
-        
+        else 
+        {
+             current_merch->stock += amount;
+             shelf_occupied->quantity += amount;
+        } 
     }
-
-    merch_t *current_merch;
-    
-    if(ioopm_hash_table_lookup(db->merch_ht,string_elem(merch), &current_merch))
+    else 
     {
-        
+        shelf_t *new_shelf = create_shelf(merch, amount, shelf);
         current_merch->stock += amount;
-        ioopm_list_t *shelf_list = current_merch->location;
-
-        
-
-        ioopm_list_iterator_t *list_it = ioopm_list_iterator_create(shelf_list);
-
-        
-        while(!ioopm_list_iterator_at_end(list_it))
-        {
-            shelf_t *current_shelf = ioopm_list_iterator_current(list_it).p;
-
-            
-            if(strcmp(current_shelf->shelf , shelf) == 0)
-            {
-                current_shelf->quantity += amount;
-                break;       
-            }
-
-            ioopm_list_iterator_advance(list_it);
-        }
-
-
-        if(ioopm_list_iterator_at_end(list_it))
-        {
-
-            shelf_t *new_shelf = create_shelf(merch,amount,shelf);
-            
-
-            ioopm_list_append(shelf_list, ptr_elem(new_shelf));   
-        
-            ioopm_hash_table_insert(db->shelf_ht, string_elem(new_shelf->shelf) ,ptr_elem(new_shelf));
-
-        }
-
-        
-        
-    
-        
-        return true;
+        ioopm_hash_table_insert(db->shelf_ht, string_elem(new_shelf->shelf), ptr_elem(new_shelf));
+        ioopm_list_append(shelf_list, ptr_elem(new_shelf));
 
     }
-
-    return false;
-
     
+        return true;
 }
 
 shopping_cart_t create_cart(){

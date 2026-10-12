@@ -34,7 +34,7 @@ struct shelf
 {
     char *shelf;
     size_t quantity;
-    elem_t *merch_name;
+    char *merch_name;
 };
 
 
@@ -45,7 +45,7 @@ struct data_base
     ioopm_list_t *carts;
 };
 
-data_base_t ioopm_create_data_base(void);
+data_base_t *ioopm_create_data_base(void);
 
 merch_t *ioopm_create_merchandise(char *name, char *description, int price);
 
@@ -56,16 +56,16 @@ void ioopm_add_merchandise(hash_table_t *ht, merch_t *merch);
 void list_merchandise(hash_table_t *ht);
 
 
-void remove_merchandise(hash_table_t *ht, merch_t merch);
+bool remove_merchandise(data_base_t *db, char *merch);
 
 
-void edit_merchandise(hash_table_t *ht, merch_t merch);
+bool edit_merchandise(data_base_t *db, char *old_name, char *new_name, char *description, size_t price);
 
 
-size_t show_stock(hash_table_t *ht, merch_t merch);
+size_t show_stock(data_base_t *db, char *merch);
 
 
-void replenish(hash_table_t *ht, char *merch, size_t amount, char *shelf);
+bool replenish(data_base_t *db, char *merch, size_t amount, char *shelf);
 
 shopping_cart_t create_cart();
 

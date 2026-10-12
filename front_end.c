@@ -1,5 +1,8 @@
 #include"front_end.h"
 #include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
 #include "utils.h"
 
 
@@ -23,6 +26,22 @@ void print_menu(){
         A, L, D, E, S, P, C, R, add_cart, remove_cart, calculate, O, Q);
 }
 
+bool confirmation_ui(void){
+    char *answer = ask_question_string("Is this correct?");
+    char choice = toupper(answer[0]);
+
+    if(strchr("Y", choice) != NULL)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+
+}
+
+
 
 void add_merchandise_ui(data_base_t *db){
 
@@ -33,14 +52,34 @@ void add_merchandise_ui(data_base_t *db){
     ioopm_add_merchandise(db->merch_ht, merch);
 }
 
-void remove_merchandise_ui(hash_table_t *ht){
-    //TODO:stub
+void remove_merchandise_ui(data_base_t *db){
+    char *merch = ask_question_string("Which merch do you want to remove?");
+    if (confirmation_ui())
+    {
+        remove_merchandise(db, merch);
+    }
+    else 
+    {
+        remove_merchandise_ui(db);
+    }
 }
-void edit_merchandise_ui(hash_table_t *ht){
-    //TODO:stub
+void edit_merchandise_ui(data_base_t *db){
+    char *merch = ask_question_string("Which merch do you want to edit?");
+    char *name = ask_question_string("What is the name of the merch");
+    char *description = ask_question_string("What is the description");
+    size_t price = ask_question_int("What is the new price");
+    if (confirmation_ui())
+    {
+        edit_merchandise(db, merch, name, description, price);
+    }
+    else 
+    {
+        edit_merchandise_ui(db);
+    }
 }
-void show_stock_ui(hash_table_t *ht){
-    //TODO:stub
+void show_stock_ui(data_base_t *db){
+    char *name = ask_question_string("Name of merch:");
+    show_stock(db, name);
 }
 void replenish_ui(data_base_t *db){
     char *name = ask_question_string("Name of merch:");
@@ -72,7 +111,7 @@ void checkout_ui(){
 
 int event_loop(hash_table_t *ht) {
     
-    data_base_t db = ioopm_create_data_base();
+    data_base_t *db = ioopm_create_data_base();
     
     while(true){
         print_menu();
