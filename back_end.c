@@ -88,16 +88,17 @@ bool remove_merchandise(data_base_t *db, char *merch){
     elem_t result;
 
     bool merch_lookup = ioopm_hash_table_lookup(db->merch_ht, string_elem(merch), &result);
+    merch_t *merch_to_remove = result.p;
 
     if(!merch_lookup)
     {
         return false;
     }
 
-    merch_t *merch_to_remove = result.p;
+    
 
-    //else 
-   // {   
+    else 
+    {   
         ioopm_list_iterator_t *it = ioopm_list_iterator_create(merch_to_remove->location);
 
         while (!ioopm_list_iterator_at_end(it))
@@ -114,7 +115,9 @@ bool remove_merchandise(data_base_t *db, char *merch){
         ioopm_list_iterator_destroy(it);
         ioopm_list_destroy(merch_to_remove->location);
         ioopm_hash_table_remove(db->merch_ht, string_elem(merch));
-   // }
+
+        return true;
+    }
 }
 
 bool edit_merchandise(data_base_t *db, char *old_name, char *new_name, char *description, size_t price){

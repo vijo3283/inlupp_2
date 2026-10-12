@@ -161,6 +161,16 @@ answer_t make_float(char *str)
   return a;                  // returnera värdet
 }
 
+answer_t make_string(char *str)
+{
+    return (answer_t){ .string_value = strdup(str) };
+}
+
+answer_t make_int(char *str)
+{
+    return (answer_t){ .int_value = atoi(str) };
+}
+
 /// Hjälpfunktion till ask_question_string, kopierad från labb
 bool not_empty(char *str)
 {
@@ -199,7 +209,8 @@ bool right_letter(char *str)
     char val = toupper(str[0]);
 
     //Returns a pointer to the first occurrence of the character if it is found.
-    if (strchr("ALDESPCR", val) != NULL)
+
+    if (strchr("ALDESPCR+-OQ", val) != NULL)
     {
         return true;
     }
@@ -219,7 +230,7 @@ answer_t char_to_answer(char *str)
 
 char *ask_question_string(char *question)
 {
-  answer_t answer = ask_question(question, not_empty, (convert_func *) strdup);
+  answer_t answer = ask_question(question, not_empty, make_string);
   
   return answer.string_value;
 
@@ -229,7 +240,7 @@ char *ask_question_string(char *question)
 //kopierad från labb
 int ask_question_int(char *question)
 {
-  answer_t answer = ask_question(question, is_number, (convert_func *) atoi);
+  answer_t answer = ask_question(question, is_number, make_int);
   return answer.int_value; // svaret som ett heltal
 }
 
@@ -274,7 +285,7 @@ bool is_shelf(char *shelf)
 
 char *ask_question_shelf(char *question)
 {
-  answer_t answer = ask_question(question, (check_func *) is_shelf, (convert_func *) strdup);
+  answer_t answer = ask_question(question, (check_func *) is_shelf, make_string);
   return answer.string_value;
 
 
