@@ -26,11 +26,26 @@ void print_menu(){
         A, L, D, E, S, P, C, R, add_cart, remove_cart, calculate, O, Q);
 }
 
-bool confirmation_ui(void){
-    char *answer = ask_question_string("Is this correct?");
+bool confirmation_ui_yes(void){
+    char *answer = ask_question_string("Is this correct? (Yes)");
     char choice = toupper(answer[0]);
 
     if(strchr("Y", choice) != NULL)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+
+}
+
+bool confirmation_ui_no(void){
+    char *answer = ask_question_string("Do you want to continue? (No)");
+    char choice = toupper(answer[0]);
+
+    if(strchr("N", choice) != NULL)
     {
         return true;
     }
@@ -52,9 +67,19 @@ void add_merchandise_ui(data_base_t *db){
     ioopm_add_merchandise(db->merch_ht, merch);
 }
 
+void list_merchandise_ui(data_base_t *db){
+    size_t index = 0;
+    list_merchandise(db, index);
+    char *merch = ask_question_string("list more items?");
+    while (!confirmation_ui_no())
+    {
+        list_merchandise(db, index + 20);
+    }
+}
+
 void remove_merchandise_ui(data_base_t *db){
     char *merch = ask_question_string("Which merch do you want to remove?");
-    if (confirmation_ui())
+    if (confirmation_ui_yes())
     {
         remove_merchandise(db, merch);
     }
@@ -68,7 +93,7 @@ void edit_merchandise_ui(data_base_t *db){
     char *name = ask_question_string("What is the name of the merch");
     char *description = ask_question_string("What is the description");
     size_t price = ask_question_int("What is the new price");
-    if (confirmation_ui())
+    if (confirmation_ui_yes())
     {
         edit_merchandise(db, merch, name, description, price);
     }
@@ -117,22 +142,22 @@ int event_loop(hash_table_t *ht) {
         print_menu();
         char choice = ask_question_menu("Pick your choice: ");
         if (choice == 'A'){
-            add_merchandise_ui(&db);
+            add_merchandise_ui(db);
         }
         else if (choice == 'L'){
-            list_merchandise(&db); //LÖS
+            list_merchandise_ui(db); //LÖS
         }
         else if (choice == 'D'){
-            remove_merchandise_ui(&db);
+            remove_merchandise_ui(db);
         }
         else if (choice == 'E'){
-            edit_merchandise_ui(ht);
+            edit_merchandise_ui(db);
         }
         else if (choice == 'S') {
-            show_stock_ui(ht);
+            show_stock_ui(db);
         }
         else if (choice == 'P') {
-            replenish_ui(ht);
+            replenish_ui(db);
             return 0;
         }
         else if (choice == 'C') {
