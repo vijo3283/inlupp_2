@@ -55,8 +55,8 @@ merch_t *ioopm_create_merchandise(char *name, char *description, int price);
 
 void ioopm_add_merchandise(hash_table_t *ht, merch_t *merch);
 
-
-void list_merchandise(data_base_t *db, size_t index);
+//true if there is more items to list
+bool list_merchandise(data_base_t *db, size_t index);
 
 
 bool remove_merchandise(data_base_t *db, char *merch);

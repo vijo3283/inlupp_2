@@ -13,7 +13,7 @@ void print_menu(void)
     char *L = "[L]ist merchandise";
     char *D = "[D]elete merchandise";
     char *E = "[E]dit merchandise";
-    char *S = "[S]how merchandise";
+    char *S = "[S]how stock merchandise";
     char *P = "Re[p]lenish"; 
     char *C = "[C]reate Cart";
     char *R = "[R]emove Cart";
@@ -29,7 +29,7 @@ void print_menu(void)
 
 bool confirmation_ui_yes(void)
 {
-    char *answer = ask_question_string("Is this correct? (Yes)");
+    char *answer = ask_question_string("Is this correct? (Yes) \n");
 
     if(answer[0] == 'Y' || answer[0] == 'y')
     {
@@ -44,7 +44,7 @@ bool confirmation_ui_yes(void)
 
 bool confirmation_ui_no(void)
 {
-    char *answer = ask_question_string("Do you want to continue? (No)");
+    char *answer = ask_question_string("Do you want to continue? (No)\n");
 
     if(answer[0] == 'N' || answer[0] == 'n')
     {
@@ -59,25 +59,35 @@ bool confirmation_ui_no(void)
 void add_merchandise_ui(data_base_t *db)
 {
 
-    char *name = ask_question_string("What is the name of the merch");
-    char *description = ask_question_string("What is the description");
-    int price = ask_question_int("What is the description");
+    char *name = ask_question_string("What is the name of the merch \n");
+    char *description = ask_question_string("What is the description \n");
+    int price = ask_question_int("What is the price \n");
     merch_t *merch = ioopm_create_merchandise(name, description, price);
     ioopm_add_merchandise(db->merch_ht, merch);
 }
 
 void list_merchandise_ui(data_base_t *db){
     size_t index = 0;
-    list_merchandise(db, index);
-    while (!confirmation_ui_no())
+
+    bool continue_list = list_merchandise(db, index);
+
+    if(continue_list)
     {
-        list_merchandise(db, index + 20);
+        while (!confirmation_ui_no())
+        {
+        continue_list = list_merchandise(db, index + 20);
+        }
+        
     }
+
+    return;
+
+    
 }
 
 void remove_merchandise_ui(data_base_t *db)
 {
-    char *merch = ask_question_string("Which merch do you want to remove?");
+    char *merch = ask_question_string("Which merch do you want to remove?\n");
     if (confirmation_ui_yes())
     {
         remove_merchandise(db, merch);
@@ -90,10 +100,11 @@ void remove_merchandise_ui(data_base_t *db)
 
 void edit_merchandise_ui(data_base_t *db)
 {
-    char *merch = ask_question_string("Which merch do you want to edit?");
-    char *name = ask_question_string("What is the name of the merch");
-    char *description = ask_question_string("What is the description");
-    size_t price = ask_question_int("What is the new price");
+    char *merch = ask_question_string("Which merch do you want to edit?\n");
+    //kanske göra en lookup?
+    char *name = ask_question_string("What is the name of the merch\n");
+    char *description = ask_question_string("What is the description\n");
+    size_t price = ask_question_int("What is the new price\n");
     if (confirmation_ui_yes())
     {
         edit_merchandise(db, merch, name, description, price);
@@ -106,15 +117,17 @@ void edit_merchandise_ui(data_base_t *db)
 
 void show_stock_ui(data_base_t *db)
 {
-    char *name = ask_question_string("Name of merch:");
-    show_stock(db, name);
+    char *name = ask_question_string("Name of merch:\n");
+    size_t stock = show_stock(db, name);
+    printf("%s has %zu merchandies in stock\n", name, stock);
+    
 }
 
 void replenish_ui(data_base_t *db)
 {
-    char *name = ask_question_string("Name of merch:");
-    size_t amount = ask_question_int("How many?");
-    char *shelf = ask_question_shelf("Which shelf?");
+    char *name = ask_question_string("Name of merch:\n");
+    size_t amount = ask_question_int("How many?\n");
+    char *shelf = ask_question_shelf("Which shelf?\n");
    
     replenish(db, name, amount, shelf);
 }
@@ -156,8 +169,10 @@ static int event_loop() {
     
     while(true)
     {
+        printf("\n");
         print_menu();
-        char choice = ask_question_menu("Pick your choice: ");
+        printf("\n");
+        char choice = ask_question_menu("Pick your choice: \n");
         if (choice == 'A'){
             add_merchandise_ui(db);
         }
