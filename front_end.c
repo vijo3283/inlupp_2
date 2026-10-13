@@ -70,7 +70,7 @@ void add_merchandise_ui(data_base_t *db)
     }
     while(!is_positive_number(price));
 
-    merch_t *merch = ioopm_create_merchandise(name, description, price);
+    merch_t *merch = ioopm_create_merchandise(db, name, description, price);
     ioopm_add_merchandise(db->merch_ht, merch);
 }
 

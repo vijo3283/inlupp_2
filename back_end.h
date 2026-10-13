@@ -60,10 +60,10 @@ void ioopm_list_sort(ioopm_list_t *list, char *value);
 
 data_base_t *ioopm_create_data_base(void);
 
-merch_t *ioopm_create_merchandise(char *name, char *description, int price);
+merch_t *ioopm_create_merchandise(data_base_t *db, char *name, char *description, int price);
 
 
-void ioopm_add_merchandise(hash_table_t *ht, merch_t *merch);
+bool ioopm_add_merchandise(hash_table_t *ht, merch_t *merch);
 
 //true if there is more items to list
 bool list_merchandise(data_base_t *db, size_t index);
