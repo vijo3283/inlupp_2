@@ -45,7 +45,17 @@ data_base_t *ioopm_create_data_base(void){
 };
 
 
-merch_t *ioopm_create_merchandise(char *name, char *description, int price){
+merch_t *ioopm_create_merchandise(data_base_t *db, char *name, char *description, int price){
+
+    elem_t result;
+    bool merch_exist = ioopm_hash_table_lookup(db->merch_ht,string_elem(name), &result);
+
+    if(merch_exist)
+    {
+        printf("Can not create merch");
+        return NULL;
+    }
+
     merch_t *merch = malloc(sizeof(merch_t));
     merch->name = name;
     merch->description = description;
@@ -67,8 +77,12 @@ static shelf_t *create_shelf(char *name, size_t quantity, char *shelf)
     return new_shelf;
 }
 
-void ioopm_add_merchandise(hash_table_t *ht, merch_t *merch){
+bool ioopm_add_merchandise(hash_table_t *ht, merch_t *merch){
+    if(!(merch == NULL)){
     ioopm_hash_table_insert(ht, string_elem(merch->name), ptr_elem(merch));
+    return true;
+    }
+    return false;
 }
 
 bool list_merchandise(data_base_t *db, size_t index){
@@ -83,6 +97,7 @@ bool list_merchandise(data_base_t *db, size_t index){
         ioopm_list_sort(list, current_key);
         ioopm_hash_table_iterator_advance(merch_it);
     }
+    ioopm_hash_table_iterator_destroy(merch_it);
 
 
     for (size_t i = index; i <= index + 20; i++)
@@ -315,8 +330,38 @@ cart_item_t *create_cart_item(merch_t *merch, int amount)
 
 }
 
-void remove_cart(void){
-    
+bool remove_cart(data_base_t *db, int user_id){
+    elem_t result_cart;
+    bool id_exist = ioopm_hash_table_lookup(db->cart_ht, int_elem(user_id), &result_cart);
+
+    if(!id_exist)
+    {
+        printf("No cart was found with the id\n");
+        return false;
+    }
+    ioopm_list_t *user_list = result_cart.p;
+
+    if(!ioopm_list_is_empty(user_list))
+    {
+    ioopm_list_iterator_t *list_it = ioopm_list_iterator_create(user_list);
+        while(ioopm_list_iterator_at_end(list_it))
+        {
+            elem_t current_item = ioopm_list_iterator_current(list_it);
+            cart_item_t *current_cart_item = current_item.p;
+
+            int quantity_to_remove = current_cart_item->quantity;
+            current_cart_item->merch->reserved -= quantity_to_remove;
+
+            ioopm_list_iterator_advance(list_it);
+            free(current_cart_item);
+
+        }
+        ioopm_list_iterator_destroy(list_it);
+    }
+    ioopm_list_destroy(user_list);
+    ioopm_hash_table_remove(db->cart_ht, int_elem(user_id));
+    return true;
+
 }
 
 bool add_to_cart(data_base_t *db, int user_id, char *merch, int amount){
@@ -357,12 +402,14 @@ bool add_to_cart(data_base_t *db, int user_id, char *merch, int amount){
             if(amount > enough_stock(merch_add))
             {
                 printf("Not enough stock \n");
+                ioopm_list_iterator_destroy(cart_it);
                 return false;
             }
             else
             {
                 current_cart_item->quantity += amount;
                 merch_add->reserved += amount;
+                ioopm_list_iterator_destroy(cart_it);
                 return true;
 
             }
@@ -370,6 +417,7 @@ bool add_to_cart(data_base_t *db, int user_id, char *merch, int amount){
 
         ioopm_list_iterator_advance(cart_it);
     }
+    ioopm_list_iterator_destroy(cart_it);
     }
    
 

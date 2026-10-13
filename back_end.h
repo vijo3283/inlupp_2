@@ -88,7 +88,7 @@ int create_cart(data_base_t *db);
 cart_item_t *create_cart_item(merch_t *merch, int amount);
 
 
-void remove_cart(void);
+bool remove_cart(data_base_t *db, int user_id);
  
 
 bool add_to_cart(data_base_t *db, int user_id, char *merch, int amount);

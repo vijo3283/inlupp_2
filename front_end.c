@@ -170,8 +170,9 @@ void create_cart_ui(data_base_t *db)
 
 }
 
-void remove_cart_ui(){
-    //TODO:stub
+void remove_cart_ui(data_base_t *db){
+    int user_id = ask_question_int("What is your cart ID: \n");
+    remove_cart(db, user_id);
 }
 
 void add_to_cart_ui(data_base_t *db){
@@ -243,19 +244,19 @@ static int event_loop() {
             create_cart_ui(db);
         }
         else if (choice == 'R') {
-            remove_cart_ui();
+            remove_cart_ui(db);
         }
         else if (choice == '+') {
             add_to_cart_ui(db);
         }
         else if (choice == '-') {
-            remove_from_cart_ui();
+            remove_from_cart_ui(db);
         }
         else if (choice == '=') {
             calculate_cost_ui(db);
         }
         else if (choice == 'O') {
-            checkout_ui();
+            checkout_ui(db);
         }
         else if (choice == 'Q') {
             if(quit())
