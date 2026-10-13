@@ -210,7 +210,7 @@ bool right_letter(char *str)
 
     //Returns a pointer to the first occurrence of the character if it is found.
 
-    if (strchr("ALHDESPCR+-OQ", val) != NULL)
+    if (strchr("ALHDESPCR+-=OQ", val) != NULL)
     {
         return true;
     }

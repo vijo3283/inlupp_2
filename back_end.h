@@ -97,7 +97,7 @@ bool add_to_cart(data_base_t *db, int user_id, char *merch, int amount);
 void remove_from_cart(merch_t merch, size_t amount);
 
 
-int calculate_cost(void);
+int calculate_cost(data_base_t *db, int user_id);
 
 
 void checkout(void);

@@ -36,7 +36,7 @@ void add_to_cart_ui();
 
 void remove_from_cart_ui();
 
-void calculate_cost_ui();
+void calculate_cost_ui(data_base_t *db);
 
 void checkout_ui();
 

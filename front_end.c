@@ -191,8 +191,11 @@ void remove_from_cart_ui(){
     //TODO:stub
 }
 
-void calculate_cost_ui(){
-    //TODO:stub
+void calculate_cost_ui(data_base_t *db){
+    int user_id = ask_question_int("What is your cart ID: \n");
+
+   int cost = calculate_cost(db, user_id);
+   printf("Your total is: %d \n", cost);
 }
 
 void checkout_ui(){
@@ -249,7 +252,7 @@ static int event_loop() {
             remove_from_cart_ui();
         }
         else if (choice == '=') {
-            calculate_cost_ui();
+            calculate_cost_ui(db);
         }
         else if (choice == 'O') {
             checkout_ui();
