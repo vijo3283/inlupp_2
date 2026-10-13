@@ -85,6 +85,8 @@ bool replenish(data_base_t *db, char *merch, size_t amount, char *shelf);
 
 int create_cart(data_base_t *db);
 
+void print_cart(data_base_t *db, int user_id);
+
 cart_item_t *create_cart_item(merch_t *merch, int amount);
 
 
@@ -94,7 +96,7 @@ bool remove_cart(data_base_t *db, int user_id);
 bool add_to_cart(data_base_t *db, int user_id, char *merch, int amount);
 
 
-void remove_from_cart(merch_t merch, size_t amount);
+bool remove_from_cart(data_base_t *db, int user_id, char *merch, int amount);
 
 
 int calculate_cost(data_base_t *db, int user_id);

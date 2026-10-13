@@ -30,11 +30,13 @@ void replenish_ui(data_base_t *db);
 
 void create_cart_ui(data_base_t *db);
 
-void remove_cart_ui();
+void print_cart_ui(data_base_t *db);
 
-void add_to_cart_ui();
+void remove_cart_ui(data_base_t *db);
 
-void remove_from_cart_ui();
+void add_to_cart_ui(data_base_t *db);
+
+void remove_from_cart_ui(data_base_t *db);
 
 void calculate_cost_ui(data_base_t *db);
 

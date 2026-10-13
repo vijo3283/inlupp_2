@@ -21,11 +21,12 @@ void print_menu(void)
     char *add_cart = "[+]Add to Cart";
     char *remove_cart = "[-]Remove from Cart";
     char *calculate = "[=]Calculate cost";
+    char *N = "Pri[n]t cart:";
     char *O = "Check[O]ut"; 
     char *Q = "[Q]uit";
 
-    printf("%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n", 
-        A, L, H, D, E, S, P, C, R, add_cart, remove_cart, calculate, O, Q);
+    printf("%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n", 
+        A, L, H, D, E, S, P, C, R, add_cart, remove_cart, calculate, N, O, Q);
 }
 
 bool confirmation_ui_yes(void)
@@ -170,6 +171,12 @@ void create_cart_ui(data_base_t *db)
 
 }
 
+void print_cart_ui(data_base_t *db)
+{
+    int user_id = ask_question_int("What is your cart ID: \n");
+    print_cart(db, user_id);
+}
+
 void remove_cart_ui(data_base_t *db){
     int user_id = ask_question_int("What is your cart ID: \n");
     remove_cart(db, user_id);
@@ -188,8 +195,17 @@ void add_to_cart_ui(data_base_t *db){
     add_to_cart(db, user_id, add_merch, amount);
 }
 
-void remove_from_cart_ui(){
-    //TODO:stub
+void remove_from_cart_ui(data_base_t *db){
+    int user_id = ask_question_int("What is your cart ID: \n");
+    char *merch = ask_question_string("Which merch do you want to remove: \n");
+    int amount;
+    do
+    {
+        amount = ask_question_int("How many: \n");
+    }
+    while(!is_positive_number(amount));
+
+    remove_from_cart(db, user_id, merch, amount);
 }
 
 void calculate_cost_ui(data_base_t *db){
@@ -254,6 +270,9 @@ static int event_loop() {
         }
         else if (choice == '=') {
             calculate_cost_ui(db);
+        }
+        else if (choice == 'N') {
+            print_cart_ui(db);
         }
         else if (choice == 'O') {
             checkout_ui(db);
