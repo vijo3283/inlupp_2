@@ -33,7 +33,7 @@ struct merch
 struct shelf 
 {
     char *shelf;
-    size_t quantity;
+    int quantity;
     char *merch_name;
 };
 
@@ -63,7 +63,7 @@ data_base_t *ioopm_create_data_base(void);
 merch_t *ioopm_create_merchandise(data_base_t *db, char *name, char *description, int price);
 
 
-bool ioopm_add_merchandise(hash_table_t *ht, merch_t *merch);
+bool ioopm_add_merchandise(data_base_t *db, merch_t *merch);
 
 //true if there is more items to list
 bool list_merchandise(data_base_t *db, size_t index);
@@ -102,6 +102,6 @@ bool remove_from_cart(data_base_t *db, int user_id, char *merch, int amount);
 int calculate_cost(data_base_t *db, int user_id);
 
 
-void checkout(void);
+void checkout(data_base_t *db, int user_id);
 
 

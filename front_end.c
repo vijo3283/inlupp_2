@@ -72,26 +72,21 @@ void add_merchandise_ui(data_base_t *db)
     while(!is_positive_number(price));
 
     merch_t *merch = ioopm_create_merchandise(db, name, description, price);
-    ioopm_add_merchandise(db->merch_ht, merch);
+    ioopm_add_merchandise(db, merch);
 }
 
 void list_merchandise_ui(data_base_t *db){
     size_t index = 0;
 
     bool continue_list = list_merchandise(db, index);
-
-    if(continue_list)
-    {
-        while (!confirmation_ui_no())
+   
+        while (continue_list && !confirmation_ui_no())
         {
-        continue_list = list_merchandise(db, index + 20);
+        index += 20;
+        continue_list = list_merchandise(db, index);
         }
-        
-    }
-
-    return;
-
     
+    return;  
 }
 
 void list_one_merchandise_ui(data_base_t *db)
@@ -205,7 +200,11 @@ void remove_from_cart_ui(data_base_t *db){
     }
     while(!is_positive_number(amount));
 
-    remove_from_cart(db, user_id, merch, amount);
+    if(confirmation_ui_yes())
+    {
+        remove_from_cart(db, user_id, merch, amount);
+    }
+
 }
 
 void calculate_cost_ui(data_base_t *db){
@@ -215,15 +214,15 @@ void calculate_cost_ui(data_base_t *db){
    printf("Your total is: %d \n", cost);
 }
 
-void checkout_ui(){
-    //TODO:stub
+void checkout_ui(data_base_t *db){
+    int user_id = ask_question_int("What is your cart ID: \n");
+    checkout(db, user_id);
 }
 
 bool quit(void)
 {
     return confirmation_ui_yes();
 }
-
 
 static int event_loop() {
     
@@ -291,8 +290,6 @@ static int event_loop() {
     return 0;
     
 }
-
-
 
 int main(int argc, char* argv[])
 {

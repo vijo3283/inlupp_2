@@ -3,7 +3,7 @@
 
 bool is_positive_number(int number)
 {
-    return(number >= 0);
+    return(number > 0);
 }
 
 int enough_stock(merch_t *merch)
@@ -75,9 +75,9 @@ static shelf_t *create_shelf(char *name, size_t quantity, char *shelf)
     return new_shelf;
 }
 
-bool ioopm_add_merchandise(hash_table_t *ht, merch_t *merch){
+bool ioopm_add_merchandise(data_base_t *db, merch_t *merch){
     if(!(merch == NULL)){
-    ioopm_hash_table_insert(ht, string_elem(merch->name), ptr_elem(merch));
+    ioopm_hash_table_insert(db->merch_ht, string_elem(merch->name), ptr_elem(merch));
     return true;
     }
     return false;
@@ -98,7 +98,7 @@ bool list_merchandise(data_base_t *db, size_t index){
     ioopm_hash_table_iterator_destroy(merch_it);
 
 
-    for (size_t i = index; i <= index + 20; i++)
+    for (size_t i = index; i < index + 20; i++)
     {
         
         if (i >= ioopm_list_size(list))
@@ -535,7 +535,67 @@ int calculate_cost(data_base_t *db, int user_id){
     return total_cost;
 }
 
-void checkout(void){
-    //TODO: stub
+void remove_shelf(data_base_t *db, shelf_t *shelf){
+
+    ioopm_hash_table_remove(db->shelf_ht,string_elem(shelf->shelf));
+    free(shelf->shelf);
+    free(shelf);
 }
 
+void remove_from_shelf(data_base_t *db, merch_t *merch, int to_remove)
+{
+    ioopm_list_t *location_list = merch->location;
+    shelf_t *shelf = ioopm_list_head(location_list).p;
+    if(shelf->quantity > to_remove)
+    {
+        shelf->quantity -= to_remove;
+    }
+    else if (shelf->quantity == to_remove){
+        remove_shelf(db, shelf);
+        ioopm_list_remove(location_list, 0);
+    }
+    else if (shelf->quantity < to_remove)
+    {
+        to_remove -= shelf->quantity;
+        remove_shelf(db, shelf);
+        ioopm_list_remove(location_list, 0);
+        ioopm_hash_table_remove(db->shelf_ht, string_elem(shelf->shelf));
+        remove_from_shelf(db, merch, to_remove);
+    }
+
+
+}
+
+void checkout(data_base_t *db, int user_id){
+    elem_t result_cart;
+    bool id_exist = ioopm_hash_table_lookup(db->cart_ht, int_elem(user_id), &result_cart);
+
+    if(!id_exist)
+    {
+        printf("No cart was found with the id\n");
+        return;
+    }
+    ioopm_list_t *user_list = result_cart.p;
+
+    if(ioopm_list_is_empty(user_list))
+    {
+        printf("Cart is empty");
+        return;
+    }
+    int total_price = calculate_cost(db, user_id);
+    ioopm_list_iterator_t *list_it = ioopm_list_iterator_create(user_list);
+    while (ioopm_list_iterator_at_end(list_it))
+    {
+        elem_t current_item = ioopm_list_iterator_current(list_it);
+        cart_item_t *current_cart_item = current_item.p;
+
+        current_cart_item->merch->stock -= current_cart_item->quantity;
+
+        ioopm_list_iterator_advance(list_it);
+        }
+
+    ioopm_list_iterator_destroy(list_it);
+    remove_cart(db, user_id);
+    printf("You are checked out! The total was %d", total_price);
+    
+}
