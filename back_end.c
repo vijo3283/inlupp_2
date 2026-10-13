@@ -1,6 +1,16 @@
 #include "back_end.h"
 #include <stdio.h>
 
+bool is_positive_number(int number)
+{
+    return(number >= 0);
+}
+
+int enough_stock(merch_t *merch)
+{
+    int stock_left = (merch->stock) - (merch->reserved);
+    return stock_left;
+}
 
 void ioopm_list_sort(ioopm_list_t *list, char *value)
 {
@@ -28,7 +38,8 @@ data_base_t *ioopm_create_data_base(void){
 
     new_db->merch_ht = ioopm_hash_table_create(string_hash, comp_str);
     new_db->shelf_ht = ioopm_hash_table_create(string_hash, comp_str);
-    new_db->carts = ioopm_list_create();
+    new_db->cart_ht = ioopm_hash_table_create(int_hash, comp_int);
+    new_db->next_cart_id = 0;
 
     return new_db;
 };
@@ -41,6 +52,7 @@ merch_t *ioopm_create_merchandise(char *name, char *description, int price){
     merch->price = price;
     merch->stock = 0;
     merch->location = ioopm_list_create();
+    merch->reserved = 0;
     return merch;
 }
 
@@ -94,6 +106,30 @@ bool list_merchandise(data_base_t *db, size_t index){
     {
         return false;
     }
+}
+
+bool list_one_merch(data_base_t *db, char *merch)
+{
+    elem_t result;
+    bool merch_exist = ioopm_hash_table_lookup(db->merch_ht,string_elem(merch), &result);
+    merch_t *merch_print = result.p;
+
+    if(!merch_exist)
+    {
+        printf("Merch does not exists\n");
+        return false;
+    }
+
+    printf("Name: %s\n", merch_print->name);
+    printf("Description: %s\n", merch_print->description);
+    printf("Price: %d\n", merch_print->price);
+    printf("Stock: %ld\n", merch_print->stock);
+    printf("Reserved: %d\n", merch_print->reserved);
+
+
+
+    return true;
+
 }
 
 bool remove_merchandise(data_base_t *db, char *merch){
@@ -258,37 +294,116 @@ bool replenish(data_base_t *db, char *merch, size_t amount, char *shelf){
         return true;
 }
 
-void create_cart(){
-    //TODO; stub
+int create_cart(data_base_t *db)
+{
+    int user_id = db->next_cart_id;
+    ioopm_list_t *cart_list = ioopm_list_create();
+    ioopm_hash_table_insert(db->cart_ht, int_elem(db->next_cart_id), ptr_elem(cart_list));
+    db->next_cart_id += 1;
+
+    return user_id;
+    
 }
 
-void remove_cart(shopping_cart_t shopping_cart){
-    (void) shopping_cart;
+cart_item_t *create_cart_item(merch_t *merch, int amount)
+{
+    cart_item_t *new_item = malloc(sizeof(cart_item_t));
+    new_item->merch = merch;
+    new_item->quantity = amount;
+
+    return new_item;
+
 }
 
-void add_to_cart(shopping_cart_t shopping_cart, merch_t merch, size_t amount){
+void remove_cart(void){
+    
+}
+
+bool add_to_cart(data_base_t *db, int user_id, char *merch, int amount){
+   
+    elem_t result;
+    bool merch_exist = ioopm_hash_table_lookup(db->merch_ht, string_elem(merch), &result);
+
+    merch_t *merch_add = result.p;
+
+    if(!merch_exist)
+    {
+        printf("Merch does not exist, not possible to add in cart \n");
+        return false;
+    }
+
+    elem_t result_cart;
+    bool id_exist = ioopm_hash_table_lookup(db->cart_ht, int_elem(user_id), &result_cart);
+
+    ioopm_list_t *user_list = result_cart.p;
+
+    if(!id_exist)
+    {
+        printf("No cart was found with the id\n");
+        return false;
+    }
+
+    if(!ioopm_list_is_empty(user_list))
+    {
+
+    ioopm_list_iterator_t *cart_it = ioopm_list_iterator_create(user_list);
+    while(!ioopm_list_iterator_at_end(cart_it))
+    {
+        elem_t current_item = ioopm_list_iterator_current(cart_it);
+        cart_item_t *current_cart_item = current_item.p;
+
+        if(current_cart_item->merch->name == merch)
+        {
+            if(amount > enough_stock(merch_add))
+            {
+                printf("Not enough stock \n");
+                return false;
+            }
+            else
+            {
+                current_cart_item->quantity += amount;
+                merch_add->reserved += amount;
+                return true;
+
+            }
+        }
+
+        ioopm_list_iterator_advance(cart_it);
+    }
+    }
+   
+
+        if(amount > enough_stock(merch_add))
+        {
+                    printf("Not enough stock \n");
+                    return false;
+        }
+        else
+        {
+            cart_item_t *new_cart_item = create_cart_item(merch_add, amount);
+            merch_add->reserved += amount;
+
+            ioopm_list_append(user_list, ptr_elem(new_cart_item));
+            return true;
+
+        }
+    
+
+}
+
+void remove_from_cart( merch_t merch, size_t amount){
     //TODO: stub
-    (void) shopping_cart;
-    (void) merch;
-    (void)amount;
-}
-
-void remove_from_cart(shopping_cart_t shopping_cart, merch_t merch, size_t amount){
-    //TODO: stub
-    (void) shopping_cart;
     (void) merch;
     (void) amount;
 }
 
-int calculate_cost(shopping_cart_t shopping_cart){
+int calculate_cost(void){
     //TODO: stub
-    (void) shopping_cart;
     return -2;
 }
 
 
-void checkout(shopping_cart_t shopping_cart){
+void checkout(void){
     //TODO: stub
-    (void) shopping_cart;
 }
 

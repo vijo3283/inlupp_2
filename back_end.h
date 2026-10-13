@@ -8,9 +8,11 @@
 
 
 typedef struct merch merch_t;
-typedef struct shopping_cart shopping_cart_t;
 typedef struct shelf shelf_t;
 typedef struct data_base data_base_t;
+typedef struct cart_item cart_item_t;
+
+
 
 
 struct merch 
@@ -20,15 +22,13 @@ struct merch
     int price;
     size_t stock;
 
+    int reserved;
+
     //dubbel pointers array?
     ioopm_list_t *location;
 
 };
 
-struct shopping_cart
-{
-    ioopm_list_t *cart;
-};
 
 struct shelf 
 {
@@ -42,8 +42,18 @@ struct data_base
 {
     hash_table_t *merch_ht;
     hash_table_t *shelf_ht;
-    ioopm_list_t *carts;
+    hash_table_t *cart_ht;
+    int next_cart_id;
 };
+
+struct cart_item
+{
+    merch_t *merch;
+    int quantity;
+};
+
+bool is_positive_number(int number);
+
 
 void ioopm_list_sort(ioopm_list_t *list, char *value);
 
@@ -58,6 +68,9 @@ void ioopm_add_merchandise(hash_table_t *ht, merch_t *merch);
 //true if there is more items to list
 bool list_merchandise(data_base_t *db, size_t index);
 
+bool list_one_merch(data_base_t *db, char *merch);
+
+
 
 bool remove_merchandise(data_base_t *db, char *merch);
 
@@ -70,21 +83,23 @@ size_t show_stock(data_base_t *db, char *merch);
 
 bool replenish(data_base_t *db, char *merch, size_t amount, char *shelf);
 
-void create_cart();
+int create_cart(data_base_t *db);
+
+cart_item_t *create_cart_item(merch_t *merch, int amount);
 
 
-void remove_cart(shopping_cart_t shopping_cart);
+void remove_cart(void);
  
 
-void add_to_cart(shopping_cart_t shopping_cart, merch_t merch, size_t amount);
+bool add_to_cart(data_base_t *db, int user_id, char *merch, int amount);
 
 
-void remove_from_cart(shopping_cart_t shopping_cart, merch_t merch, size_t amount);
+void remove_from_cart(merch_t merch, size_t amount);
 
 
-int calculate_cost(shopping_cart_t shopping_cart);
+int calculate_cost(void);
 
 
-void checkout(shopping_cart_t shopping_cart);
+void checkout(void);
 
 

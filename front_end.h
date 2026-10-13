@@ -18,6 +18,8 @@ void add_merchandise_ui(data_base_t *db);
 
 void list_merchandise_ui(data_base_t *db);
 
+void list_one_merchandise_ui(data_base_t *db);
+
 void remove_merchandise_ui(data_base_t *db);
 
 void edit_merchandise_ui(data_base_t *db);
@@ -26,7 +28,7 @@ void show_stock_ui(data_base_t *db);
 
 void replenish_ui(data_base_t *db);
 
-void create_cart_ui();
+void create_cart_ui(data_base_t *db);
 
 void remove_cart_ui();
 
