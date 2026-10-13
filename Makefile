@@ -6,14 +6,10 @@ run: program
 
 
 test: program
-	printf 'A\nTestvara\nEn beskrivning\n25\nQ\ny\n' | ./program
-
-
-test-interactive: program
 	{ \
         n=1; \
         while [ "$$n" -le 21 ]; do \
-            printf 'A\nTestvara%02d\nBeskrivning %02d\n%d\n' "$$n" "$$n" "$$((n * 10))"; \
+            printf 'A\nTestvara%02d\nBeskrivning %02d\n%d\nP\nTestvara%02d\n5\nA%02d\n' "$$n" "$$n" "$$((n * 10))" "$$n" "$$n"; \
             n=$$((n + 1)); \
         done; \
         cat /dev/tty; \
