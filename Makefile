@@ -15,6 +15,8 @@ test: program
         cat /dev/tty; \
 	} | ./program
 
+text: program
+	./program < webstoretest.txt
 
 clean:
 	rm -f program
