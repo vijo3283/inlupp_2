@@ -39,7 +39,7 @@ data_base_t *ioopm_create_data_base(void){
     new_db->merch_ht = ioopm_hash_table_create(string_hash, comp_str);
     new_db->shelf_ht = ioopm_hash_table_create(string_hash, comp_str);
     new_db->cart_ht = ioopm_hash_table_create(int_hash, comp_int);
-    new_db->next_cart_id = 0;
+    new_db->next_cart_id = 1;
 
     return new_db;
 };
