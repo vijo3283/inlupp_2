@@ -172,16 +172,53 @@ bool remove_merchandise(data_base_t *db, char *merch){
 
                 ioopm_list_iterator_advance(it);
 
+                free(current_shelf->shelf);
                 free(current_shelf);
             
             }
             ioopm_list_iterator_destroy(it);
         }
+
+        if(merch_to_remove->reserved != 0)
+        {
+            hash_table_iterator_t *cart_it = ioopm_hash_table_iterator_create(db->cart_ht);
+            
+            while(!ioopm_hash_table_iterator_at_end(cart_it))
+            {
+                elem_t key = ioopm_hash_table_iterator_current_key(cart_it);
+                int cart_id = key.i;
+                elem_t value = ioopm_hash_table_iterator_current_value(cart_it);
+                ioopm_list_t *cart_list = value.p;
+
+                ioopm_list_iterator_t *list_it = ioopm_list_iterator_create(cart_list);
+                while(ioopm_list_iterator_at_end(list_it))
+                {
+                    elem_t current_item = ioopm_list_iterator_current(list_it);
+                    cart_item_t *item = current_item.p;
+
+                    if(strcmp(item->merch->name, merch_to_remove->name) == 0)
+                    {
+                        remove_from_cart(db,cart_id, item->merch->name, item->quantity);
+
+                    }
+                   
+                    ioopm_list_iterator_advance(list_it);
+                }
+                
+                ioopm_hash_table_iterator_advance(cart_it);
+
+            }
+        }
         
 
-
+      
+        
         ioopm_list_destroy(merch_to_remove->location);
         ioopm_hash_table_remove(db->merch_ht, string_elem(merch));
+
+        free(merch_to_remove->description);
+        free(merch_to_remove->name);
+        free(merch_to_remove);
 
         return true;
     }
@@ -465,48 +502,61 @@ bool add_to_cart(data_base_t *db, int user_id, char *merch, int amount){
 
 }
 
-bool remove_from_cart(data_base_t *db, int user_id, char *merch, int amount){
+bool remove_from_cart(data_base_t *db, int user_id, char *merch, int amount)
+{
     elem_t result;
-    bool merch_exist = ioopm_hash_table_lookup(db->merch_ht, string_elem(merch), &result);
+    bool merch_exist =
+        ioopm_hash_table_lookup(db->merch_ht, string_elem(merch), &result);
 
-    if(!merch_exist)
+    if (!merch_exist || amount <= 0)
     {
-        printf("Merch does not exist, not possible to add in cart \n");
+        printf("Merch does not exist, or amount is invalid\n");
         return false;
     }
+
+    merch_t *merch_to_remove = result.p;
+
     elem_t result_cart;
     bool id_exist = ioopm_hash_table_lookup(db->cart_ht, int_elem(user_id), &result_cart);
 
-    if(!id_exist)
+    if (!id_exist)
     {
         printf("No cart was found with the id\n");
         return false;
     }
+
     ioopm_list_t *user_list = result_cart.p;
 
-    ioopm_list_iterator_t *list_it = ioopm_list_iterator_create(user_list);
-    while(ioopm_list_iterator_at_end(list_it))
+    size_t i = 0;
+    while (i < ioopm_list_size(user_list))
     {
-        elem_t current_item = ioopm_list_iterator_current(list_it);
-        cart_item_t *current_cart_item = current_item.p;
+        cart_item_t *item = ioopm_list_get(user_list, i).p;
 
-        if(strcmp(current_cart_item->merch->name, merch) == 0)
+        if (item->merch == merch_to_remove)
         {
-            if(current_cart_item->quantity<amount){
-                printf("Not that many in cart");
-                ioopm_list_iterator_destroy(list_it);
+            if (item->quantity < amount)
+            {
+                printf("Not that many in cart\n");
                 return false;
             }
-            current_cart_item->merch->reserved -= amount;
-            current_cart_item->quantity -= amount;
-            ioopm_list_iterator_destroy(list_it);
+
+            merch_to_remove->reserved -= amount;
+            item->quantity -= amount;
+
+            if (item->quantity == 0)
+            {
+                cart_item_t *removed_item =
+                    ioopm_list_remove(user_list, i).p;
+                free(removed_item);
+            }
+
             return true;
         }
-        ioopm_list_iterator_advance(list_it);
-    }
-    ioopm_list_iterator_destroy(list_it);
-    return false;
 
+        i++;
+    }
+
+    return false;
 }
 
 int calculate_cost(data_base_t *db, int user_id){
@@ -608,9 +658,34 @@ void checkout(data_base_t *db, int user_id){
     
 }
 
+void cart_ht_remove(data_base_t *db)
+{
+    ioopm_hash_table_iterator_t * cart_it = ioopm_hash_table_iterator_create(db->cart_ht);
+
+    while(!ioopm_hash_table_iterator_at_end(cart_it))
+    {
+        int key = ioopm_hash_table_iterator_current_key(cart_it).i;
+
+        ioopm_hash_table_iterator_advance(cart_it);
+
+        remove_cart(db, key);
+    }
+
+    ioopm_hash_table_iterator_destroy(cart_it);
+}
+
 void quit(data_base_t *db){
-    free(db->cart_ht);
-    free(db->merch_ht);
-    free(db->shelf_ht);
+
+    cart_ht_remove(db);
+    ioopm_hash_table_destroy(db->cart_ht);
+
+
+
+
+
+
+    ioopm_hash_table_destroy(db->merch_ht);
+    ioopm_hash_table_destroy(db->shelf_ht);
+
     free(db);
 }
