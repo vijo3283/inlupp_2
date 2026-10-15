@@ -209,9 +209,13 @@ void checkout_ui(data_base_t *db){
     checkout(db, user_id);
 }
 
-bool quit(void)
+bool quit_ui(data_base_t *db)
 {
-    return confirmation_ui_yes();
+    if(confirmation_ui_yes()){
+        quit(db);
+        return true;
+    }
+    return false;
 }
 
 static int event_loop() {
@@ -267,7 +271,7 @@ static int event_loop() {
             checkout_ui(db);
         }
         else if (choice == 'Q') {
-            if(quit())
+            if(quit_ui(db))
             {
                 //returnera 0 eller 1 eller break?
                 break;

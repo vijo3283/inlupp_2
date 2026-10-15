@@ -104,4 +104,6 @@ int calculate_cost(data_base_t *db, int user_id);
 
 void checkout(data_base_t *db, int user_id);
 
+void quit(data_base_t *db);
+
 

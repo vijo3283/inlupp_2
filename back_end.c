@@ -516,7 +516,7 @@ int calculate_cost(data_base_t *db, int user_id){
     if(!id_exist)
     {
         printf("No cart was found with the id\n");
-        return -1;
+        return 0;
     }
     ioopm_list_t *user_list = result_cart.p;
 
@@ -606,4 +606,11 @@ void checkout(data_base_t *db, int user_id){
     remove_cart(db, user_id);
     printf("You are checked out! The total was %d", total_price);
     
+}
+
+void quit(data_base_t *db){
+    free(db->cart_ht);
+    free(db->merch_ht);
+    free(db->shelf_ht);
+    free(db);
 }
