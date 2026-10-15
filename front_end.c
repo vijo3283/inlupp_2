@@ -102,10 +102,6 @@ void remove_merchandise_ui(data_base_t *db)
     {
         remove_merchandise(db, merch);
     }
-    else 
-    {
-        remove_merchandise_ui(db);
-    }
 }
 
 void edit_merchandise_ui(data_base_t *db)
@@ -127,10 +123,6 @@ void edit_merchandise_ui(data_base_t *db)
     if (confirmation_ui_yes())
     {
         edit_merchandise(db, merch, name, description, price);
-    }
-    else 
-    {
-        edit_merchandise_ui(db);
     }
 }
 
@@ -171,7 +163,11 @@ void print_cart_ui(data_base_t *db)
 
 void remove_cart_ui(data_base_t *db){
     int user_id = ask_question_int("What is your cart ID: \n");
-    remove_cart(db, user_id);
+    
+     if (confirmation_ui_yes())
+    {
+        remove_cart(db, user_id);
+    }
 }
 
 void add_to_cart_ui(data_base_t *db){
@@ -197,10 +193,7 @@ void remove_from_cart_ui(data_base_t *db){
     }
     while(!is_positive_number(amount));
 
-    if(confirmation_ui_yes())
-    {
-        remove_from_cart(db, user_id, merch, amount);
-    }
+    remove_from_cart(db, user_id, merch, amount);
 
 }
 

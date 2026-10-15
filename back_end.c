@@ -273,13 +273,13 @@ bool replenish(data_base_t *db, char *merch, size_t amount, char *shelf){
     bool merch_lookup = ioopm_hash_table_lookup(db->merch_ht,string_elem(merch), &result_2);
     merch_t *current_merch = result_2.p;
 
-
-     ioopm_list_t *shelf_list = current_merch->location;
     //kolla igenom shelf ht för att kolla så varan inte finns redan på en hylla upptagen av en annan vara
 
     if (!merch_lookup){
         return false;
     }
+
+     ioopm_list_t *shelf_list = current_merch->location;
 
     if(shelf_exist)
     {
@@ -494,10 +494,12 @@ bool remove_from_cart(data_base_t *db, int user_id, char *merch, int amount){
         {
             if(current_cart_item->quantity<amount){
                 printf("Not that many in cart");
+                ioopm_list_iterator_destroy(list_it);
                 return false;
             }
             current_cart_item->merch->reserved -= amount;
             current_cart_item->quantity -= amount;
+            ioopm_list_iterator_destroy(list_it);
             return true;
         }
         ioopm_list_iterator_advance(list_it);
@@ -545,6 +547,10 @@ void remove_shelf(data_base_t *db, shelf_t *shelf){
 void remove_from_shelf(data_base_t *db, merch_t *merch, int to_remove)
 {
     ioopm_list_t *location_list = merch->location;
+    if(to_remove == 0){
+        return;
+    }
+
     shelf_t *shelf = ioopm_list_head(location_list).p;
     if(shelf->quantity > to_remove)
     {
@@ -559,7 +565,6 @@ void remove_from_shelf(data_base_t *db, merch_t *merch, int to_remove)
         to_remove -= shelf->quantity;
         remove_shelf(db, shelf);
         ioopm_list_remove(location_list, 0);
-        ioopm_hash_table_remove(db->shelf_ht, string_elem(shelf->shelf));
         remove_from_shelf(db, merch, to_remove);
     }
 
@@ -579,6 +584,7 @@ void checkout(data_base_t *db, int user_id){
 
     if(ioopm_list_is_empty(user_list))
     {
+        remove_cart(db, user_id);
         printf("Cart is empty");
         return;
     }
@@ -590,6 +596,8 @@ void checkout(data_base_t *db, int user_id){
         cart_item_t *current_cart_item = current_item.p;
 
         current_cart_item->merch->stock -= current_cart_item->quantity;
+
+        remove_from_shelf(db, current_cart_item->merch, current_cart_item->quantity);
 
         ioopm_list_iterator_advance(list_it);
         }
