@@ -18,6 +18,17 @@ test: program
 text: program
 	./program < webstoretest.txt
 
+
+backend_tests: backend_cunit_tests.c back_end.c hash_table.c hash_table_iterator.c linked_list.c linked_list_iterator.c
+	gcc -g -Wall -Wextra -o backend_tests backend_cunit_tests.c back_end.c hash_table.c hash_table_iterator.c linked_list.c linked_list_iterator.c -lcunit
+
+test_backend: backend_tests
+	./backend_tests
+
+valgrind_backend: backend_tests
+	valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./backend_tests
+
+
 clean:
 	rm -f program
 

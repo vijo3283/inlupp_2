@@ -89,6 +89,7 @@ void print_cart(data_base_t *db, int user_id);
 
 cart_item_t *create_cart_item(merch_t *merch, int amount);
 
+void remove_from_shelf(data_base_t *db, merch_t *merch, int to_remove);
 
 bool remove_cart(data_base_t *db, int user_id);
  

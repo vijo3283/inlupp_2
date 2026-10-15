@@ -241,12 +241,16 @@ bool edit_merchandise(data_base_t *db, char *old_name, char *new_name, char *des
 
     merch_t *old_merch = result.p;
 
-    
+    char *old_merch_name = old_merch->name;
+    char *old_merch_description = old_merch->description;
 
     if (strcmp(old_merch->name, new_name) == 0)
     {
         old_merch->description = description;
         old_merch->price = price;
+
+        free(old_merch_description);
+        free(new_name);
         return true;
     }
     else
@@ -264,6 +268,7 @@ bool edit_merchandise(data_base_t *db, char *old_name, char *new_name, char *des
         old_merch->price = price;
         ioopm_list_t *old_list = old_merch->location;
 
+
         if(!ioopm_list_is_empty(old_merch->location))
         {
             ioopm_list_iterator_t *it = ioopm_list_iterator_create(old_list);
@@ -280,6 +285,10 @@ bool edit_merchandise(data_base_t *db, char *old_name, char *new_name, char *des
         
 
         ioopm_hash_table_insert(db->merch_ht, string_elem(new_name), ptr_elem(old_merch));
+
+        free(old_merch_description);
+        free(old_merch_name);
+        
         return true;
         
     }

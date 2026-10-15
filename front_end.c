@@ -33,14 +33,11 @@ bool confirmation_ui_yes(void)
 {
     char *answer = ask_question_string("Is this correct? (Yes) \n");
 
-    if(answer[0] == 'Y' || answer[0] == 'y')
-    {
-        return true;
-    }
-    else
-    {
-        return false;
-    }
+    bool confirmed = answer[0] == 'Y' || answer[0] == 'y';
+
+    free(answer);
+
+    return confirmed;
     
 }
 
@@ -48,14 +45,11 @@ bool confirmation_ui_no(void)
 {
     char *answer = ask_question_string("Do you want to continue? (No)\n");
 
-    if(answer[0] == 'N' || answer[0] == 'n')
-    {
-        return true;
-    }
-    else
-    {
-        return false;
-    }
+   bool confirmed = answer[0] == 'N' || answer[0] == 'n';
+
+    free(answer);
+
+    return confirmed;
 }
 
 void add_merchandise_ui(data_base_t *db)
@@ -202,6 +196,8 @@ void add_to_cart_ui(data_base_t *db){
     while(!is_positive_number(amount));
 
     add_to_cart(db, user_id, add_merch, amount);
+
+    free(add_merch);
 }
 
 void remove_from_cart_ui(data_base_t *db){
