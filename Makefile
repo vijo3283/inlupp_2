@@ -2,7 +2,7 @@ program: front_end.c back_end.c hash_table.c hash_table_iterator.c linked_list.c
 	gcc -Wall -Wextra -g front_end.c back_end.c hash_table.c hash_table_iterator.c linked_list.c linked_list_iterator.c utils.c -o program
 
 run: program
-	./program
+	valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./program
 
 
 test: program
@@ -16,7 +16,7 @@ test: program
 	} | ./program
 
 text: program
-	./program < webstoretest.txt
+	valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./program < webstoretest.txt
 
 
 backend_tests: backend_cunit_tests.c back_end.c hash_table.c hash_table_iterator.c linked_list.c linked_list_iterator.c

@@ -117,7 +117,6 @@ bool list_merchandise(data_base_t *db, size_t index){
     return continue_list;
 }
     
-
 bool list_one_merch(data_base_t *db, char *merch)
 {
     elem_t result;
@@ -385,13 +384,15 @@ void print_cart(data_base_t *db, int user_id)
         printf("cart is empty");
     }
     ioopm_list_iterator_t *list_it = ioopm_list_iterator_create(cart_list);
+        size_t index = 1;
         while(ioopm_list_iterator_at_end(list_it))
         {
             elem_t current_item = ioopm_list_iterator_current(list_it);
             cart_item_t *current_cart_item = current_item.p;
 
-            printf("Item: %s, Amount: %d", current_cart_item->merch->name, current_cart_item->quantity);
+            printf("%ld. Item: %s, Amount: %d \n", index, current_cart_item->merch->name, current_cart_item->quantity);
             ioopm_list_iterator_advance(list_it);
+            index ++;
         }
         ioopm_list_iterator_destroy(list_it);
         return;
@@ -672,13 +673,13 @@ void merch_ht_remove(data_base_t *db){
 
 void quit(data_base_t *db){
 
-    cart_ht_remove(db);
-    ioopm_hash_table_destroy(db->cart_ht);
-
     merch_ht_remove(db);
-    ioopm_hash_table_destroy(db->merch_ht);
+    cart_ht_remove(db);
 
+
+    ioopm_hash_table_destroy(db->cart_ht);
     ioopm_hash_table_destroy(db->shelf_ht);
+    ioopm_hash_table_destroy(db->merch_ht);
 
     free(db);
 }
