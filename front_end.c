@@ -95,7 +95,6 @@ void list_one_merchandise_ui(data_base_t *db)
     list_one_merch(db,merch);
 }
 
-
 void remove_merchandise_ui(data_base_t *db)
 {
     char *merch = ask_question_string("Which merch do you want to remove?\n");
@@ -145,6 +144,7 @@ void show_stock_ui(data_base_t *db)
 
 void replenish_ui(data_base_t *db)
 {
+    char *shelf = ask_question_shelf("Which shelf?\n");
     char *name = ask_question_string("Name of merch:\n");
     int amount;
     do
@@ -152,9 +152,6 @@ void replenish_ui(data_base_t *db)
         amount = ask_question_int("How many?\n");
     }
     while(!is_positive_number(amount));
-
-    
-    char *shelf = ask_question_shelf("Which shelf?\n");
    
     replenish(db, name, amount, shelf);
 }
