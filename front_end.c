@@ -72,6 +72,14 @@ void add_merchandise_ui(data_base_t *db)
     while(!is_positive_number(price));
 
     merch_t *merch = ioopm_create_merchandise(db, name, description, price);
+
+    if (merch == NULL)
+    {
+        free(name);
+        free(description);
+        return;
+    }
+
     ioopm_add_merchandise(db, merch);
 }
 
@@ -93,6 +101,8 @@ void list_one_merchandise_ui(data_base_t *db)
 {
     char *merch = ask_question_string("Which merch do you want to list: \n");
     list_one_merch(db,merch);
+
+    free(merch);
 }
 
 void remove_merchandise_ui(data_base_t *db)
@@ -102,6 +112,7 @@ void remove_merchandise_ui(data_base_t *db)
     {
         remove_merchandise(db, merch);
     }
+    free(merch);
 }
 
 void edit_merchandise_ui(data_base_t *db)
@@ -118,12 +129,18 @@ void edit_merchandise_ui(data_base_t *db)
     }
     while(!is_positive_number(price));
     
-
-    
-    if (confirmation_ui_yes())
+     if (confirmation_ui_yes() &&
+        edit_merchandise(db, merch, name, description, price))
     {
-        edit_merchandise(db, merch, name, description, price);
+        // edit_merchandise har tagit över name och description
     }
+    else
+    {
+        free(name);
+        free(description);
+    }
+
+    free(merch);
 }
 
 void show_stock_ui(data_base_t *db)
@@ -131,7 +148,8 @@ void show_stock_ui(data_base_t *db)
     char *name = ask_question_string("Name of merch:\n");
     size_t stock = show_stock(db, name);
     printf("%s has %zu merchandies in stock\n", name, stock);
-    
+
+    free(name);
 }
 
 void replenish_ui(data_base_t *db)
@@ -146,6 +164,9 @@ void replenish_ui(data_base_t *db)
     while(!is_positive_number(amount));
    
     replenish(db, name, amount, shelf);
+
+    free(name);
+
 }
 
 void create_cart_ui(data_base_t *db)
@@ -194,6 +215,7 @@ void remove_from_cart_ui(data_base_t *db){
     while(!is_positive_number(amount));
 
     remove_from_cart(db, user_id, merch, amount);
+    free(merch);
 
 }
 
@@ -211,10 +233,12 @@ void checkout_ui(data_base_t *db){
 
 bool quit_ui(data_base_t *db)
 {
-    if(confirmation_ui_yes()){
+    if (confirmation_ui_yes())
+    {
         quit(db);
         return true;
     }
+
     return false;
 }
 
@@ -271,13 +295,10 @@ static int event_loop() {
             checkout_ui(db);
         }
         else if (choice == 'Q') {
-            if(quit_ui(db))
-            {
-                //returnera 0 eller 1 eller break?
-                break;
-
-            }
-            
+            if (quit_ui(db))
+    {
+            break;
+    }
         }
     }
     

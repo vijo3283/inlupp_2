@@ -40,5 +40,7 @@ void remove_from_cart_ui(data_base_t *db);
 
 void calculate_cost_ui(data_base_t *db);
 
-void checkout_ui();
+void checkout_ui(data_base_t *db);
+
+bool quit_ui(data_base_t *db);
 
