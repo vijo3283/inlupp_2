@@ -6,6 +6,9 @@
 #include "linked_list_iterator.h"
 #include "hash_table_internal.h"
 #include "linked_list_internal.h"
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
 
 /// @brief Prints the available merchandise, inventory, and shopping-cart commands.
 void print_menu(void);

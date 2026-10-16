@@ -1,5 +1,4 @@
 #include "back_end.h"
-#include <stdio.h>
 
 bool ioopm_is_positive_number(int number)
 {
@@ -36,6 +35,21 @@ static bool find_merch_shelf(hash_table_t *ht, char *key, elem_t *result)
 static bool find_cart(hash_table_t *ht, int key, elem_t *result)
 {
     return ioopm_hash_table_lookup(ht, int_elem(key), result);
+}
+
+static int find_cart_item(ioopm_list_t *cart, merch_t *merch)
+{
+    for (size_t i = 0; i < ioopm_list_size(cart); i++)
+    {
+        cart_item_t *item = ioopm_list_get(cart, i).p;
+
+        if (item->merch == merch)
+        {
+            return (int)i;
+        }
+    }
+
+    return -1;
 }
 
 data_base_t *ioopm_create_data_base(void)
@@ -448,28 +462,20 @@ bool ioopm_add_to_cart(data_base_t *db, int user_id, char *merch, int amount)
 
     ioopm_list_t *user_list = result_cart.p;
 
-    ioopm_list_iterator_t *cart_it = ioopm_list_iterator_create(user_list);
-    while (ioopm_list_iterator_at_end(cart_it))
+    int index = find_cart_item(user_list, merch_add);
+
+    if (index != -1)
     {
-        cart_item_t *current_cart_item = ioopm_list_iterator_current(cart_it).p;
-
-        if (current_cart_item->merch == merch_add)
-        {
-            current_cart_item->quantity += amount;
-            merch_add->reserved += amount;
-
-            ioopm_list_iterator_destroy(cart_it);
-            return true;
-        }
-        ioopm_list_iterator_advance(cart_it);
+        cart_item_t *item = ioopm_list_get(user_list, index).p;
+        item->quantity += amount;
+    }
+    else
+    {
+        cart_item_t *new_item = ioopm_create_cart_item(merch_add, amount);
+        ioopm_list_append(user_list, ptr_elem(new_item));
     }
 
-    ioopm_list_iterator_destroy(cart_it);
-    cart_item_t *new_item = ioopm_create_cart_item(merch_add, amount);
-
-    ioopm_list_append(user_list, ptr_elem(new_item));
     merch_add->reserved += amount;
-
     return true;
 }
 
@@ -492,33 +498,32 @@ bool ioopm_remove_from_cart(data_base_t *db, int user_id, char *merch, int amoun
     merch_t *merch_to_remove = result.p;
     ioopm_list_t *user_list = result_cart.p;
 
-    size_t i = 0;
-    while (i < ioopm_list_size(user_list))
+    int index = find_cart_item(user_list, merch_to_remove);
+
+    if(index == -1)
     {
-        cart_item_t *item = ioopm_list_get(user_list, i).p;
-
-        if (item->merch == merch_to_remove)
-        {
-            if (item->quantity < amount)
-            {
-                printf("Not that many in cart\n");
-                return false;
-            }
-            merch_to_remove->reserved -= amount;
-            item->quantity -= amount;
-
-            if (item->quantity == 0)
-            {
-                cart_item_t *removed_item =
-                    ioopm_list_remove(user_list, i).p;
-                free(removed_item);
-            }
-            return true;
-        }
-        i++;
+        return false;
     }
-    return false;
+    cart_item_t *item = ioopm_list_get(user_list, index).p;
+
+    if (item->quantity < amount)
+    {
+        printf("Not that many in cart\n");
+        return false;
+    }
+
+    merch_to_remove->reserved -= amount;
+    item->quantity -= amount;
+
+    if (item->quantity == 0)
+    {
+        ioopm_list_remove(user_list, index);
+        free(item);
+    }
+
+    return true;
 }
+
 
 int ioopm_calculate_cost(data_base_t *db, int user_id)
 {

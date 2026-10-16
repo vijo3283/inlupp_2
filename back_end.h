@@ -5,6 +5,7 @@
 #include "linked_list_iterator.h"
 #include "hash_table_internal.h"
 #include "linked_list_internal.h"
+#include <stdio.h>
 
 typedef struct merch merch_t;
 typedef struct shelf shelf_t;
