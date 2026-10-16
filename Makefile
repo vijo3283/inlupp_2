@@ -33,15 +33,15 @@ valgrind_backend: backend_tests
 	valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./backend_tests
 
 backend_tests_cov: $(COV_SOURCES)
-    gcc -g -Wall -Wextra --coverage -o $@ $(COV_SOURCES) -lcunit
+	gcc -g -Wall -Wextra --coverage -o $@ $(COV_SOURCES) -lcunit
 
 gcov: backend_tests_cov
-    rm -f backend_tests_cov-*.gcda
-    ./backend_tests_cov
-    gcov -b -c backend_tests_cov-*.gcno
+	rm -f backend_tests_cov-*.gcda
+	./backend_tests_cov
+	gcov -b -c backend_tests_cov-*.gcno
 
 
 clean:
-	rm -f program
+	rm -f program *.gcov *.gcda *.gcno *_cov
 
 .PHONY: test test-interactive gcov
