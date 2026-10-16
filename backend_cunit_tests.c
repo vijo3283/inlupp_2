@@ -63,6 +63,20 @@ void test_create_and_remove_merch(void)
     quit(db);
 }
 
+void test_list_merchandise(void)
+{
+    data_base_t *db = ioopm_create_data_base();
+    CU_ASSERT_PTR_NOT_NULL_FATAL(db);
+
+    add_merch(db, "Cykel", "uppsala", 150);
+    add_merch(db, "Bil", "fordon", 200);
+    add_merch(db, "Ananas", "frukt", 20);
+
+    CU_ASSERT_FALSE(list_merchandise(db, 0));
+
+    quit(db);
+}
+
 void test_duplicate_merch(void)
 {
     data_base_t *db = ioopm_create_data_base();
@@ -242,7 +256,8 @@ int main(void)
         CU_add_test(suite, "Edit name and description", test_edit_name_and_description) == NULL ||
         CU_add_test(suite, "Edit missing merchandise", test_edit_missing_merch) == NULL ||
         CU_add_test(suite, "Remove merchandise from carts", test_remove_merch_from_multiple_carts) == NULL ||
-        CU_add_test(suite, "Quit empty database", test_quit_empty_database) == NULL) {
+        CU_add_test(suite, "Quit empty database", test_quit_empty_database) == NULL ||
+        CU_add_test(suite, "Quit empty database", test_list_merchandise) == NULL) {
         CU_cleanup_registry();
         return CU_get_error();
     }
