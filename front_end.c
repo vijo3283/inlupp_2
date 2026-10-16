@@ -1,11 +1,9 @@
-#include"front_end.h"
+#include "front_end.h"
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
 
 #include "utils.h"
-
-
 
 void print_menu(void)
 {
@@ -15,18 +13,18 @@ void print_menu(void)
     char *D = "[D]elete merchandise";
     char *E = "[E]dit merchandise";
     char *S = "[S]how stock merchandise";
-    char *P = "Re[p]lenish"; 
+    char *P = "Re[p]lenish";
     char *C = "[C]reate Cart";
     char *R = "[R]emove Cart";
     char *add_cart = "[+]Add to Cart";
     char *remove_cart = "[-]Remove from Cart";
     char *calculate = "[=]Calculate cost";
     char *N = "Pri[n]t cart:";
-    char *O = "Check[O]ut"; 
+    char *O = "Check[O]ut";
     char *Q = "[Q]uit";
 
-    printf("%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n", 
-        A, L, H, D, E, S, P, C, R, add_cart, remove_cart, calculate, N, O, Q);
+    printf("%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n",
+           A, L, H, D, E, S, P, C, R, add_cart, remove_cart, calculate, N, O, Q);
 }
 
 bool confirmation_ui_yes(void)
@@ -38,14 +36,13 @@ bool confirmation_ui_yes(void)
     free(answer);
 
     return confirmed;
-    
 }
 
 bool confirmation_ui_no(void)
 {
     char *answer = ask_question_string("Do you want to continue? (No)\n");
 
-   bool confirmed = answer[0] == 'N' || answer[0] == 'n';
+    bool confirmed = answer[0] == 'N' || answer[0] == 'n';
 
     free(answer);
 
@@ -62,8 +59,7 @@ void add_merchandise_ui(data_base_t *db)
     do
     {
         price = ask_question_int("What is the price \n");
-    }
-    while(!is_positive_number(price));
+    } while (!ioopm_is_positive_number(price));
 
     merch_t *merch = ioopm_create_merchandise(db, name, description, price);
 
@@ -77,24 +73,25 @@ void add_merchandise_ui(data_base_t *db)
     ioopm_add_merchandise(db, merch);
 }
 
-void list_merchandise_ui(data_base_t *db){
+void list_merchandise_ui(data_base_t *db)
+{
     size_t index = 0;
 
-    bool continue_list = list_merchandise(db, index);
-   
-        while (continue_list && !confirmation_ui_no())
-        {
+    bool continue_list = ioopm_list_merchandise(db, index);
+
+    while (continue_list && !confirmation_ui_no())
+    {
         index += 20;
-        continue_list = list_merchandise(db, index);
-        }
-    
-    return;  
+        continue_list = ioopm_list_merchandise(db, index);
+    }
+
+    return;
 }
 
 void list_one_merchandise_ui(data_base_t *db)
 {
     char *merch = ask_question_string("Which merch do you want to list: \n");
-    list_one_merch(db,merch);
+    ioopm_list_one_merch(db, merch);
 
     free(merch);
 }
@@ -104,7 +101,7 @@ void remove_merchandise_ui(data_base_t *db)
     char *merch = ask_question_string("Which merch do you want to remove?\n");
     if (confirmation_ui_yes())
     {
-        remove_merchandise(db, merch);
+        ioopm_remove_merchandise(db, merch);
     }
     free(merch);
 }
@@ -112,7 +109,7 @@ void remove_merchandise_ui(data_base_t *db)
 void edit_merchandise_ui(data_base_t *db)
 {
     char *merch = ask_question_string("Which merch do you want to edit?\n");
-    //kanske göra en lookup?
+    // kanske göra en lookup?
     char *name = ask_question_string("What is the name of the merch\n");
     char *description = ask_question_string("What is the description\n");
 
@@ -120,11 +117,10 @@ void edit_merchandise_ui(data_base_t *db)
     do
     {
         price = ask_question_int("What is the new price\n");
-    }
-    while(!is_positive_number(price));
-    
-     if (confirmation_ui_yes() &&
-        edit_merchandise(db, merch, name, description, price))
+    } while (!ioopm_is_positive_number(price));
+
+    if (confirmation_ui_yes() &&
+        ioopm_edit_merchandise(db, merch, name, description, price))
     {
         // edit_merchandise har tagit över name och description
     }
@@ -140,8 +136,8 @@ void edit_merchandise_ui(data_base_t *db)
 void show_stock_ui(data_base_t *db)
 {
     char *name = ask_question_string("Name of merch:\n");
-    size_t stock = show_stock(db, name);
-    printf("%s has %zu merchandies in stock\n", name, stock);
+    int stock = ioopm_show_stock(db, name);
+    printf("%s has %d merchandies in stock\n", name, stock);
 
     free(name);
 }
@@ -154,158 +150,171 @@ void replenish_ui(data_base_t *db)
     do
     {
         amount = ask_question_int("How many?\n");
-    }
-    while(!is_positive_number(amount));
-   
-    replenish(db, name, amount, shelf);
+    } while (!ioopm_is_positive_number(amount));
+
+    ioopm_replenish(db, name, amount, shelf);
 
     free(name);
-
 }
 
 void create_cart_ui(data_base_t *db)
 {
-    int user_id = create_cart(db);
+    int user_id = ioopm_create_cart(db);
     printf("Your cart ID is: %d\n", user_id);
-
 }
 
 void print_cart_ui(data_base_t *db)
 {
     int user_id = ask_question_int("What is your cart ID: \n");
-    print_cart(db, user_id);
+    ioopm_print_cart(db, user_id);
 }
 
-void remove_cart_ui(data_base_t *db){
+void remove_cart_ui(data_base_t *db)
+{
     int user_id = ask_question_int("What is your cart ID: \n");
-    
-     if (confirmation_ui_yes())
+
+    if (confirmation_ui_yes())
     {
-        remove_cart(db, user_id);
+        ioopm_remove_cart(db, user_id);
     }
 }
 
-void add_to_cart_ui(data_base_t *db){
+void add_to_cart_ui(data_base_t *db)
+{
     int user_id = ask_question_int("What is your cart ID: \n");
     char *add_merch = ask_question_string("Which merch do you want to add: \n");
     int amount;
     do
     {
         amount = ask_question_int("How many: \n");
-    }
-    while(!is_positive_number(amount));
+    } while (!ioopm_is_positive_number(amount));
 
-    add_to_cart(db, user_id, add_merch, amount);
+    ioopm_add_to_cart(db, user_id, add_merch, amount);
 
     free(add_merch);
 }
 
-void remove_from_cart_ui(data_base_t *db){
+void remove_from_cart_ui(data_base_t *db)
+{
     int user_id = ask_question_int("What is your cart ID: \n");
     char *merch = ask_question_string("Which merch do you want to remove: \n");
     int amount;
     do
     {
         amount = ask_question_int("How many: \n");
-    }
-    while(!is_positive_number(amount));
+    } while (!ioopm_is_positive_number(amount));
 
-    remove_from_cart(db, user_id, merch, amount);
+    ioopm_remove_from_cart(db, user_id, merch, amount);
     free(merch);
-
 }
 
-void calculate_cost_ui(data_base_t *db){
+void calculate_cost_ui(data_base_t *db)
+{
     int user_id = ask_question_int("What is your cart ID: \n");
 
-   int cost = calculate_cost(db, user_id);
-   printf("Your total is: %d \n", cost);
+    int cost = ioopm_calculate_cost(db, user_id);
+    printf("Your total is: %d \n", cost);
 }
 
-void checkout_ui(data_base_t *db){
+void checkout_ui(data_base_t *db)
+{
     int user_id = ask_question_int("What is your cart ID: \n");
-    checkout(db, user_id);
+    ioopm_checkout(db, user_id);
 }
 
 bool quit_ui(data_base_t *db)
 {
     if (confirmation_ui_yes())
     {
-        quit(db);
+        ioopm_quit(db);
         return true;
     }
 
     return false;
 }
 
-static int event_loop() {
-    
+static int event_loop()
+{
+
     data_base_t *db = ioopm_create_data_base();
-    
-    while(true)
+
+    while (true)
     {
         printf("\n");
         print_menu();
         printf("\n");
         char choice = ask_question_menu("Pick your choice: \n");
-        if (choice == 'A'){
+        if (choice == 'A')
+        {
             add_merchandise_ui(db);
         }
-        else if (choice == 'L'){
-            list_merchandise_ui(db); //LÖS
-        }    
-        else if (choice == 'H'){
-            list_one_merchandise_ui(db); //LÖS    
+        else if (choice == 'L')
+        {
+            list_merchandise_ui(db); // LÖS
         }
-        else if (choice == 'D'){
+        else if (choice == 'H')
+        {
+            list_one_merchandise_ui(db); // LÖS
+        }
+        else if (choice == 'D')
+        {
             remove_merchandise_ui(db);
         }
-        else if (choice == 'E'){
+        else if (choice == 'E')
+        {
             edit_merchandise_ui(db);
         }
-        else if (choice == 'S') {
+        else if (choice == 'S')
+        {
             show_stock_ui(db);
         }
-        else if (choice == 'P') {
+        else if (choice == 'P')
+        {
             replenish_ui(db);
         }
-        else if (choice == 'C') {
+        else if (choice == 'C')
+        {
             create_cart_ui(db);
         }
-        else if (choice == 'R') {
+        else if (choice == 'R')
+        {
             remove_cart_ui(db);
         }
-        else if (choice == '+') {
+        else if (choice == '+')
+        {
             add_to_cart_ui(db);
         }
-        else if (choice == '-') {
+        else if (choice == '-')
+        {
             remove_from_cart_ui(db);
         }
-        else if (choice == '=') {
+        else if (choice == '=')
+        {
             calculate_cost_ui(db);
         }
-        else if (choice == 'N') {
+        else if (choice == 'N')
+        {
             print_cart_ui(db);
         }
-        else if (choice == 'O') {
+        else if (choice == 'O')
+        {
             checkout_ui(db);
         }
-        else if (choice == 'Q') {
+        else if (choice == 'Q')
+        {
             if (quit_ui(db))
-    {
-            break;
-    }
+            {
+                break;
+            }
         }
     }
-    
+
     return 0;
-    
 }
 
-int main(int argc, char* argv[])
+int main(int argc, char *argv[])
 {
-    (void) argc;
-    (void) argv;
+    (void)argc;
+    (void)argv;
     event_loop();
-
 }

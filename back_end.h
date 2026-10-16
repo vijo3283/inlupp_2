@@ -1,42 +1,35 @@
 #pragma once
-#include"hash_table.h"
-#include"hash_table_iterator.h"
-#include"linked_list.h"
-#include"linked_list_iterator.h"
-#include"hash_table_internal.h"
-#include"linked_list_internal.h"
-
+#include "hash_table.h"
+#include "hash_table_iterator.h"
+#include "linked_list.h"
+#include "linked_list_iterator.h"
+#include "hash_table_internal.h"
+#include "linked_list_internal.h"
 
 typedef struct merch merch_t;
 typedef struct shelf shelf_t;
 typedef struct data_base data_base_t;
 typedef struct cart_item cart_item_t;
 
-
-
-
-struct merch 
+struct merch
 {
     char *name;
     char *description;
     int price;
-    size_t stock;
+    int stock;
 
     int reserved;
 
-    //dubbel pointers array?
+    // dubbel pointers array?
     ioopm_list_t *location;
-
 };
 
-
-struct shelf 
+struct shelf
 {
     char *shelf;
     int quantity;
     char *merch_name;
 };
-
 
 struct data_base
 {
@@ -55,7 +48,7 @@ struct cart_item
 /// @brief Checks whether an integer is positive.
 /// @param number The integer to check.
 /// @return true if number is greater than zero; otherwise false.
-bool is_positive_number(int number);
+bool ioopm_is_positive_number(int number);
 
 /// @brief Creates an empty database and its merchandise, shelf, and cart tables.
 /// @return A pointer to the newly allocated database.
@@ -82,22 +75,21 @@ bool ioopm_add_merchandise(data_base_t *db, merch_t *merch);
 /// @param db The database containing the merchandise.
 /// @param index The zero-based index of the first name to print.
 /// @return true if more names remain after this page; otherwise false.
-bool list_merchandise(data_base_t *db, size_t index);
+bool ioopm_list_merchandise(data_base_t *db, size_t index);
 
 /// @brief Prints the details of a merchandise item identified by name.
 /// @pre db must point to an initialized database; merch must be a valid string.
 /// @param db The database in which to search.
 /// @param merch The name of the item to display.
 /// @return true if the item exists and was displayed; otherwise false.
-bool list_one_merch(data_base_t *db, char *merch);
-
+bool ioopm_list_one_merch(data_base_t *db, char *merch);
 
 /// @brief Removes a merchandise item, its shelf entries, and its references in carts.
 /// @pre db must point to an initialized database; merch must be a valid string.
 /// @param db The database from which to remove the item.
 /// @param merch The name of the item to remove.
 /// @return true if the item existed and was removed; otherwise false.
-bool remove_merchandise(data_base_t *db, char *merch);
+bool ioopm_remove_merchandise(data_base_t *db, char *merch);
 
 /// @brief Changes a merchandise item's name, description, and price.
 /// @details The new name must not belong to another item. When the name changes,
@@ -109,14 +101,14 @@ bool remove_merchandise(data_base_t *db, char *merch);
 /// @param description The replacement description.
 /// @param price The replacement price.
 /// @return true if the item was found and updated; otherwise false.
-bool edit_merchandise(data_base_t *db, char *old_name, char *new_name, char *description, size_t price);
+bool ioopm_edit_merchandise(data_base_t *db, char *old_name, char *new_name, char *description, int price);
 
 /// @brief Gets the stock quantity for a named merchandise item.
 /// @pre db must point to an initialized database; merch must be a valid string.
 /// @param db The database in which to search.
 /// @param merch The name of the item.
 /// @return The item's stock quantity, or zero if the item does not exist.
-size_t show_stock(data_base_t *db, char *merch);
+int ioopm_show_stock(data_base_t *db, char *merch);
 
 /// @brief Adds stock to a merchandise item at the specified shelf.
 /// @details A shelf already assigned to a different item cannot be used.
@@ -127,26 +119,26 @@ size_t show_stock(data_base_t *db, char *merch);
 /// @param shelf The shelf identifier at which to store the stock.
 /// @return true if stock was added; otherwise false, including when the item does not exist
 ///         or the shelf is assigned to another item.
-bool replenish(data_base_t *db, char *merch, size_t amount, char *shelf);
+bool ioopm_replenish(data_base_t *db, char *merch, int amount, char *shelf);
 
 /// @brief Creates an empty cart and assigns it a new ID.
 /// @pre db must point to an initialized database.
 /// @param db The database in which to create the cart.
 /// @return The ID assigned to the new cart.
-int create_cart(data_base_t *db);
+int ioopm_create_cart(data_base_t *db);
 
 /// @brief Prints the merchandise and quantities in a cart.
 /// @pre db must point to an initialized database.
 /// @param db The database containing the cart.
 /// @param user_id The ID of the cart to print.
 /// @return Nothing. Prints a message if the cart does not exist or is empty.
-void print_cart(data_base_t *db, int user_id);
+void ioopm_print_cart(data_base_t *db, int user_id);
 
 /// @brief Allocates a cart item referring to a merchandise item and quantity.
 /// @param merch The merchandise item referenced by the cart item.
 /// @param amount The quantity stored in the cart item.
 /// @return A pointer to the newly allocated cart item.
-cart_item_t *create_cart_item(merch_t *merch, int amount);
+cart_item_t *ioopm_create_cart_item(merch_t *merch, int amount);
 
 /// @brief Removes a quantity of stock from the merchandise item's shelves, starting at its first shelf.
 /// @pre db must point to an initialized database; merch must have sufficient stock on its shelves.
@@ -154,15 +146,15 @@ cart_item_t *create_cart_item(merch_t *merch, int amount);
 /// @param merch The merchandise whose shelf quantities are reduced.
 /// @param to_remove The quantity to remove.
 /// @return Nothing.
-void remove_from_shelf(data_base_t *db, merch_t *merch, int to_remove);
+void ioopm_remove_from_shelf(data_base_t *db, merch_t *merch, int to_remove);
 
 /// @brief Removes a cart and releases the stock reserved by its items.
 /// @pre db must point to an initialized database.
 /// @param db The database containing the cart.
 /// @param user_id The ID of the cart to remove.
 /// @return true if the cart existed and was removed; otherwise false.
-bool remove_cart(data_base_t *db, int user_id);
- 
+bool ioopm_remove_cart(data_base_t *db, int user_id);
+
 /// @brief Adds a quantity of merchandise to a cart and reserves the corresponding stock.
 /// @pre db must point to an initialized database; merch must be a valid string and amount positive.
 /// @param db The database containing the cart and merchandise.
@@ -171,7 +163,7 @@ bool remove_cart(data_base_t *db, int user_id);
 /// @param amount The positive quantity to add.
 /// @return true if the item was added; otherwise false if the item or cart does not exist,
 ///         or there is not enough unreserved stock.
-bool add_to_cart(data_base_t *db, int user_id, char *merch, int amount);
+bool ioopm_add_to_cart(data_base_t *db, int user_id, char *merch, int amount);
 
 /// @brief Removes a quantity of merchandise from a cart and releases its reserved stock.
 /// @pre db must point to an initialized database; merch must be a valid string and amount positive.
@@ -181,25 +173,24 @@ bool add_to_cart(data_base_t *db, int user_id, char *merch, int amount);
 /// @param amount The positive quantity to remove.
 /// @return true if the quantity was removed; otherwise false if the item or cart does not exist,
 ///         the quantity is invalid, or the cart does not contain enough.
-bool remove_from_cart(data_base_t *db, int user_id, char *merch, int amount);
+bool ioopm_remove_from_cart(data_base_t *db, int user_id, char *merch, int amount);
 
 /// @brief Calculates the total price of all items in a cart.
 /// @pre db must point to an initialized database.
 /// @param db The database containing the cart.
 /// @param user_id The ID of the cart to total.
 /// @return The total price, or zero if the cart does not exist or is empty.
-int calculate_cost(data_base_t *db, int user_id);
+int ioopm_calculate_cost(data_base_t *db, int user_id);
 
 /// @brief Completes checkout by deducting cart quantities from stock and removing the cart.
 /// @pre db must point to an initialized database.
 /// @param db The database containing the cart.
 /// @param user_id The ID of the cart to check out.
 /// @return Nothing. Prints a message if the cart does not exist; an empty cart is removed.
-void checkout(data_base_t *db, int user_id);
+void ioopm_checkout(data_base_t *db, int user_id);
 
 /// @brief Frees the database, its tables, and the merchandise and cart data they own.
 /// @pre db must point to a database created by ioopm_create_data_base and must not be used afterward.
 /// @param db The database to destroy.
 /// @return Nothing.
-void quit(data_base_t *db);
-
+void ioopm_quit(data_base_t *db);

@@ -1,11 +1,11 @@
 #pragma once
-#include"back_end.h"
-#include"hash_table.h"
-#include"hash_table_iterator.h"
-#include"linked_list.h"
-#include"linked_list_iterator.h"
-#include"hash_table_internal.h"
-#include"linked_list_internal.h"
+#include "back_end.h"
+#include "hash_table.h"
+#include "hash_table_iterator.h"
+#include "linked_list.h"
+#include "linked_list_iterator.h"
+#include "hash_table_internal.h"
+#include "linked_list_internal.h"
 
 /// @brief Prints the available merchandise, inventory, and shopping-cart commands.
 void print_menu(void);
