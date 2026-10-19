@@ -52,6 +52,7 @@ struct cart_item
 bool ioopm_is_positive_number(int number);
 
 /// @brief Creates an empty database and its merchandise, shelf, and cart tables.
+/// To remove a data base: use ioopm_quit
 /// @return A pointer to the newly allocated database.
 data_base_t *ioopm_create_data_base(void);
 
