@@ -1,4 +1,4 @@
-COV_SOURCES = backend_cunit_tests.c back_end.c hash_table.c hash_table_iterator.c linked_list.c linked_list_iterator.c
+COV_SOURCES = backend_cunit_tests.c back_end.c hash_table.c hash_table_iterator.c linked_list.c linked_list_iterator.c utils.c
 
 
 program: front_end.c back_end.c hash_table.c hash_table_iterator.c linked_list.c linked_list_iterator.c utils.c
@@ -10,6 +10,14 @@ run: program
 
 text: program
 	valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./program < webstoretest.txt
+
+program_text_cov: front_end.c back_end.c hash_table.c hash_table_iterator.c linked_list.c linked_list_iterator.c utils.c
+	gcc -Wall -Wextra -g --coverage front_end.c back_end.c hash_table.c hash_table_iterator.c linked_list.c linked_list_iterator.c utils.c -o $@
+
+gcov_text: program_text_cov
+	rm -f program_text_cov-*.gcda
+	./program_text_cov < webstoretest.txt
+	gcov -b -c program_text_cov-*.gcno
 
 
 backend_tests: backend_cunit_tests.c back_end.c hash_table.c hash_table_iterator.c linked_list.c linked_list_iterator.c
@@ -31,6 +39,6 @@ gcov: backend_tests_cov
 
 
 clean:
-	rm -f program *.gcov *.gcda *.gcno *_cov
+	rm -f program program_text_cov *.gcov *.gcda *.gcno *_cov
 
-.PHONY: test test-interactive gcov
+.PHONY: test test-interactive gcov gcov_text

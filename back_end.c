@@ -109,7 +109,6 @@ bool ioopm_add_merchandise(data_base_t *db, merch_t *merch)
 
 bool ioopm_list_merchandise(data_base_t *db, size_t index)
 {
-    // om listan är tom
     ioopm_list_t *list = ioopm_list_create();
     hash_table_iterator_t *merch_it = ioopm_hash_table_iterator_create(db->merch_ht);
 
@@ -500,7 +499,7 @@ bool ioopm_remove_from_cart(data_base_t *db, int user_id, char *merch, int amoun
 
     int index = find_cart_item(user_list, merch_to_remove);
 
-    if(index == -1)
+    if (index == -1)
     {
         return false;
     }
@@ -523,7 +522,6 @@ bool ioopm_remove_from_cart(data_base_t *db, int user_id, char *merch, int amoun
 
     return true;
 }
-
 
 int ioopm_calculate_cost(data_base_t *db, int user_id)
 {

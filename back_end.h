@@ -18,10 +18,8 @@ struct merch
     char *description;
     int price;
     int stock;
-
     int reserved;
 
-    // dubbel pointers array?
     ioopm_list_t *location;
 };
 
@@ -63,6 +61,7 @@ data_base_t *ioopm_create_data_base(void);
 /// @param description The merchandise description.
 /// @param price The merchandise price.
 /// @return A pointer to the newly allocated item, or NULL if the name is already in use.
+/// the merch type owns its name and despcription.
 merch_t *ioopm_create_merchandise(data_base_t *db, char *name, char *description, int price);
 
 /// @brief Inserts a non-NULL merchandise item into the database, keyed by its name.
@@ -140,6 +139,7 @@ void ioopm_print_cart(data_base_t *db, int user_id);
 /// @param merch The merchandise item referenced by the cart item.
 /// @param amount The quantity stored in the cart item.
 /// @return A pointer to the newly allocated cart item.
+/// The type cart_item_t does not own the merch, it only points to the struct merch.
 cart_item_t *ioopm_create_cart_item(merch_t *merch, int amount);
 
 /// @brief Removes a quantity of stock from the merchandise item's shelves, starting at its first shelf.
