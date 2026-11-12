@@ -133,7 +133,15 @@ void show_stock_ui(data_base_t *db)
 {
     char *name = ask_question_string("Name of merch:\n");
     int stock = ioopm_show_stock(db, name);
-    printf("%s has %d merchandies in stock\n", name, stock);
+
+    if (stock == -1)
+    {
+        puts("Merch does not exist");
+    }
+    else 
+    {
+        printf("%s has %d merchandies in stock\n", name, stock);
+    }
 
     free(name);
 }
