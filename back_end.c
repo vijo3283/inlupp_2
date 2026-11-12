@@ -325,7 +325,7 @@ int ioopm_show_stock(data_base_t *db, char *merch)
         merch_t *current_merch = result.p;
         return current_merch->stock;
     }
-    return 0;
+    return -1;
 }
 
 bool ioopm_replenish(data_base_t *db, char *merch, int amount, char *shelf)
