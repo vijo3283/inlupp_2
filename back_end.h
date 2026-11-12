@@ -126,7 +126,7 @@ bool ioopm_replenish(data_base_t *db, char *merch, int amount, char *shelf);
 /// @pre db must point to an initialized database.
 /// @param db The database in which to create the cart.
 /// @return The ID assigned to the new cart.
-int ioopm_create_cart(data_base_t *db);
+size_t ioopm_create_cart(data_base_t *db);
 
 /// @brief Prints the merchandise and quantities in a cart.
 /// @pre db must point to an initialized database.
