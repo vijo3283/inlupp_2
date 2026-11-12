@@ -147,7 +147,7 @@ void test_edit_stock_replenish_false(void)
     add_merch(db, "Ananas", "frukt", 20);
 
     int stock = ioopm_show_stock(db, "Äpple");
-    CU_ASSERT_EQUAL(stock, 0);
+    CU_ASSERT_EQUAL(stock, -1);
 
     bool been_replenished =
         ioopm_replenish(db, "Banan", 3, copy_string("A37"));
